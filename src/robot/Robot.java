@@ -178,7 +178,7 @@ public class Robot extends JFrame{
       new Robot();
 
    }
-     
+     //Dodaje komentarz
 }
 
 
