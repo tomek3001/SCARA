@@ -15,7 +15,7 @@ public class Robot extends JFrame{
 
     Robot(){
         //OGÓLNIE KOD WZIĘTY Z LABORKI ////////////////////////////////////////////////////////////////////////////////////////////////
-          super("Program3D");
+          super("SCARA");
           
        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
