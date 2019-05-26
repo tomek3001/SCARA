@@ -261,6 +261,7 @@ public class Robot extends JFrame{
         
         //Działanie KLAWIATURY////////////////////////////////////////////////////////////////////////////////////////////////
        
+         KeyMovement event1 = new KeyMovement(matka_ramie_1_tg);
         
        
                 
