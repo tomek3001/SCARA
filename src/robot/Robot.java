@@ -10,11 +10,16 @@ import javax.media.j3d.Transform3D;
 import javax.vecmath.*;
 import com.sun.j3d.utils.behaviors.mouse.*;
 import com.sun.j3d.utils.behaviors.keyboard.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.*;
 
 
 
-public class Robot extends JFrame{
+public class Robot extends JFrame implements ActionListener, KeyListener{
 
+    Vector3f pierwsze_ramie = new Vector3f(1.8f, 4.0f, 0.0f);
+        
+        
     Robot(){
         //OGÓLNIE KOD WZIĘTY Z LABORKI ////////////////////////////////////////////////////////////////////////////////////////////////
           super("SCARA");
@@ -37,13 +42,18 @@ public class Robot extends JFrame{
 	    scena.compile();
 
         SimpleUniverse simpleU = new SimpleUniverse(canvas3D);
-
+        simpleU.getViewingPlatform().setNominalViewingTransform();
+        
         Transform3D przesuniecie_obserwatora = new Transform3D();       //USTAWIAMY OBSERWATORA W DOMYŚLNEJ POZYCJI
         przesuniecie_obserwatora.set(new Vector3f(0.0f,5.0f,30.0f));
 
         simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
 
         simpleU.addBranchGraph(scena);
+        
+        canvas3D.addKeyListener(this);
+        add(BorderLayout.CENTER, canvas3D);
+        
 
     }
 
@@ -133,7 +143,7 @@ public class Robot extends JFrame{
         TransformGroup ramie_1_tg = new TransformGroup();                                      //transformgroup z ramieniem przesuniętym
         com.sun.j3d.utils.geometry.Box ramie_1 = new com.sun.j3d.utils.geometry.Box(3.0f, 0.1f, 1.0f, wyglad_ramie_1);
         Transform3D p_ramie_1 = new Transform3D();
-        p_ramie_1.set(new Vector3f(1.8f, 4.0f, 0.0f));
+        p_ramie_1.set(pierwsze_ramie);
         ramie_1_tg.setTransform(p_ramie_1);
         matka_ramie_1_tg.addChild(ramie_1_tg);
         ramie_1_tg.addChild(ramie_1);
@@ -231,12 +241,8 @@ public class Robot extends JFrame{
         wezel_temp.addChild(zoom);
         
         //Działanie KLAWIATURY////////////////////////////////////////////////////////////////////////////////////////////////
-       
-         KeyMovement event1 = new KeyMovement(matka_ramie_1_tg);
-        
-       
-                
-        
+
+    
         
         //KOŃEC////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         wezel_scena.addChild(wezel_temp);
@@ -245,9 +251,40 @@ public class Robot extends JFrame{
     }
 
      public static void main(String args[]){
-      new Robot();
+
+         
+      //new Robot();
+        Robot bb = new Robot();
+        bb.addKeyListener(bb);
 
    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        
+     //   throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+      //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_SPACE)
+            System.out.println("COS DZIAŁA");
+        else if(e.getKeyCode()== KeyEvent.VK_LEFT)
+        {
+            
+        }
+      //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+      //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
 
