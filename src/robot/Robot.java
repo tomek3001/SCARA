@@ -110,8 +110,9 @@ public class Robot extends JFrame{
         
         
         //Podstawa
+        Material mat_podstawa = new Material(new Color3f(0.4f, 0.3f, 0.2f), new Color3f(0.3f, 0.2f, 0.3f), new Color3f(0.5f, 0.5f, 0.5f), new Color3f(0.3f, 0.3f, 0.3f), 128.0f);
         Appearance wyglad_podstawa = new Appearance();
-        wyglad_podstawa.setMaterial(new Material());
+        wyglad_podstawa.setMaterial(mat_podstawa);
         
         TransformGroup podstawa_tg = new TransformGroup();
         wezel_temp.addChild(podstawa_tg);
@@ -138,8 +139,6 @@ public class Robot extends JFrame{
         matka_ramie_1_tg.addChild(ramie_1_tg);
         ramie_1_tg.addChild(ramie_1);
         
-        
-        
         //Drugi element ramienia
         Material mat_ramie_2 = new Material(new Color3f(0.1f, 0.2f, 0.3f), new Color3f(0.0f, 0.7f, 0.1f), new Color3f(0.1f, 0.4f, 0.9f), new Color3f(0.1f, 0.3f, 0.f), 50.0f);
         Appearance wyglad_ramie_2 = new Appearance();     //materiał, wygląd
@@ -161,6 +160,7 @@ public class Robot extends JFrame{
         matka_ramie_2_tg.addChild(ramie_2_tg);
         ramie_2_tg.addChild(ramie_2);
         
+        
         //Łączenie ramion
         Cylinder polaczenie_1_2 = new Cylinder(0.1f, 0.4f, wyglad_podstawa);
         matka_ramie_2_tg.addChild(polaczenie_1_2);
@@ -175,7 +175,6 @@ public class Robot extends JFrame{
         
         TransformGroup pionowy_tg = new TransformGroup();
         Cylinder pionowy = new Cylinder(0.1f, 4f, wyglad_pionowy);
-        // matka_pionowy_tg.addChild(pionowy_tg);
         ramie_2_tg.addChild(pionowy_tg);
         pionowy_tg.addChild(pionowy);
         Transform3D p_pionowy = new Transform3D();
@@ -191,16 +190,25 @@ public class Robot extends JFrame{
         //obracanie pierwszego ramienia
         MouseRotate obracanie_1 = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
         matka_ramie_1_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
-        obracanie_1.setFactor(0.05, 0);                                                      //mnożnik ruchu 0 - brak obrotu
+        obracanie_1.setFactor(0, 0);                                                      //mnożnik ruchu 0 - brak obrotu
         obracanie_1.setTransformGroup(matka_ramie_1_tg);
         wezel_temp.addChild(obracanie_1);
         obracanie_1.setSchedulingBounds(bounds);
         
         
+        //obracanie drugiego ramienia
+        MouseRotate obracanie_2 = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
+        matka_ramie_2_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
+        obracanie_2.setFactor(0.005, 0);                                                      //mnożnik ruchu 0 - brak obrotu
+        obracanie_2.setTransformGroup(matka_ramie_2_tg);
+        wezel_temp.addChild(obracanie_2);
+        obracanie_2.setSchedulingBounds(bounds);
+        
+        
         //obracanie całego dzieła
         MouseRotate obracanie_cale = new MouseRotate();
         wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        obracanie_cale.setFactor(0.01);                                                //mnożnik ruchu
+        obracanie_cale.setFactor(0);                                                //mnożnik ruchu
         wezel_temp.addChild(obracanie_cale);
         obracanie_cale.setTransformGroup(wezel_temp);
         obracanie_cale.setSchedulingBounds(bounds);
@@ -208,15 +216,12 @@ public class Robot extends JFrame{
         //Przesuwanie pionowego
         MouseTranslate suwanie_pionowe = new MouseTranslate();
         pionowy_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        suwanie_pionowe.setFactor(0, 0.1);
+        suwanie_pionowe.setFactor(0, 0.001);
         pionowy_tg.addChild(suwanie_pionowe);
         suwanie_pionowe.setTransformGroup(pionowy_tg);
-        BoundingBox pionowy_ogr = new BoundingBox(new Point3d(0,0,0), new Point3d(1,1,1));
-        suwanie_pionowe.setSchedulingBounds(pionowy_ogr);
-        pionowy_tg.setCollisionBounds(pionowy_ogr);
-        pionowy_tg.setCollidable(true);
-        pionowy_tg.setCapability(TransformGroup.ALLOW_COLLIDABLE_READ);
-        pionowy_tg.setCapability(TransformGroup.ALLOW_COLLIDABLE_WRITE);
+        BoundingSphere bounds2 = new BoundingSphere(punkcik, 0.00001);
+        ramie_2_tg.setBounds(bounds2);
+        suwanie_pionowe.setSchedulingBounds(bounds2);
         
         
         
