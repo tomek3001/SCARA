@@ -52,7 +52,7 @@ public class Robot extends JFrame{
         BranchGroup wezel_scena = new BranchGroup();
         TransformGroup wezel_temp = new TransformGroup();
         
-        BoundingSphere bounds = new BoundingSphere(punkcik,10000);
+        BoundingSphere bounds = new BoundingSphere(punkcik,1000000);
         
       //ŚWIATŁO////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       
@@ -156,14 +156,14 @@ public class Robot extends JFrame{
         
         
         //Pierwszy element ramienia
-        TransformGroup matka_ramie_1_tg = new TransformGroup();
+        TransformGroup matka_ramie_1_tg = new TransformGroup();                                //transformgroup obracający się i zawierający ramię
         wezel_temp.addChild(matka_ramie_1_tg);
         
         Material mat_ramie_1 = new Material(new Color3f(0.2f, 0.3f, 0.1f), new Color3f(0.7f, 0.1f, 0.0f), new Color3f(0.4f, 0.9f, 0.1f), new Color3f(0.3f, 0.9f, 0.1f), 50.0f);
         Appearance wyglad_ramie_1 = new Appearance();
         wyglad_ramie_1.setMaterial(mat_ramie_1);
         
-        TransformGroup ramie_1_tg = new TransformGroup();
+        TransformGroup ramie_1_tg = new TransformGroup();                                      //transformgroup z ramieniem przesuniętym
         com.sun.j3d.utils.geometry.Box ramie_1 = new com.sun.j3d.utils.geometry.Box(3.0f, 0.1f, 1.0f, wyglad_ramie_1);
         Transform3D p_ramie_1 = new Transform3D();
         p_ramie_1.set(new Vector3f(1.8f, 4.0f, 0.0f));
@@ -175,18 +175,18 @@ public class Robot extends JFrame{
         
         //Drugi element ramienia
         Material mat_ramie_2 = new Material(new Color3f(0.1f, 0.2f, 0.3f), new Color3f(0.0f, 0.7f, 0.1f), new Color3f(0.1f, 0.4f, 0.9f), new Color3f(0.1f, 0.3f, 0.f), 50.0f);
-        Appearance wyglad_ramie_2 = new Appearance();
+        Appearance wyglad_ramie_2 = new Appearance();     //materiał, wygląd
         wyglad_ramie_2.setMaterial(mat_ramie_2);
         
         
-        TransformGroup matka_ramie_2_tg = new TransformGroup();
+        TransformGroup matka_ramie_2_tg = new TransformGroup();             //transformgroup obracający się i zawierający ramię
         ramie_1_tg.addChild(matka_ramie_2_tg);
         Transform3D p_matka_ramie_2 = new Transform3D();
         p_matka_ramie_2.set(new Vector3f(2.0f, 0.2f, 0.0f));
         matka_ramie_2_tg.setTransform(p_matka_ramie_2);
         
         
-        TransformGroup ramie_2_tg = new TransformGroup();
+        TransformGroup ramie_2_tg = new TransformGroup();                   //tansfromgroup z ramieniem 2 przesuniętym
         com.sun.j3d.utils.geometry.Box ramie_2 = new com.sun.j3d.utils.geometry.Box(1.0f, 0.1f, 3.0f, wyglad_ramie_2);
         Transform3D p_ramie_2 = new Transform3D();
         p_ramie_2.set(new Vector3f(0.0f, 0.0f, 2.0f));
