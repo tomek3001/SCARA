@@ -3,6 +3,8 @@ import com.sun.j3d.utils.geometry.*;
 import javax.media.j3d.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import javax.media.j3d.Transform3D;
 import javax.vecmath.*;
@@ -176,7 +178,7 @@ public class Robot extends JFrame{
         //obracanie pierwszego ramienia
         MouseRotate obracanie_1 = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
         secondAxisAll.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
-        obracanie_1.setFactor(0);                                                      //mnożnik ruchu 0 - brak obrotu
+        obracanie_1.setFactor(0.05, 0);                                                      //mnożnik ruchu 0 - brak obrotu
         obracanie_1.setTransformGroup(secondAxisAll);
         secondAxisAll.addChild(obracanie_1);
         obracanie_1.setSchedulingBounds(bounds);
@@ -185,11 +187,16 @@ public class Robot extends JFrame{
         //obracanie całego dzieła
         MouseRotate obracanie_cale = new MouseRotate();
         wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        obracanie_cale.setFactor(0.01);                                                //mnożnik ruchu
+        obracanie_cale.setFactor(0);                                                //mnożnik ruchu
         wezel_temp.addChild(obracanie_cale);
         obracanie_cale.setTransformGroup(wezel_temp);
         obracanie_cale.setSchedulingBounds(bounds);
         
+        
+        
+        
+        
+         
         
         
         
