@@ -192,7 +192,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         //obracanie pierwszego ramienia
         MouseRotate obracanie_1 = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
         matka_ramie_1_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
-        obracanie_1.setFactor(a, 0);                                                      //mnożnik ruchu 0 - brak obrotu
+        obracanie_1.setFactor(0, 0);                                                      //mnożnik ruchu 0 - brak obrotu
         obracanie_1.setTransformGroup(matka_ramie_1_tg);
         wezel_temp.addChild(obracanie_1);
         obracanie_1.setSchedulingBounds(bounds);
@@ -201,7 +201,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         //obracanie drugiego ramienia
         MouseRotate obracanie_2 = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
         matka_ramie_2_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
-        obracanie_2.setFactor(b, 0);                                                      //mnożnik ruchu 0 - brak obrotu
+        obracanie_2.setFactor(0.005, 0);                                                      //mnożnik ruchu 0 - brak obrotu
         obracanie_2.setTransformGroup(matka_ramie_2_tg);
         wezel_temp.addChild(obracanie_2);
         obracanie_2.setSchedulingBounds(bounds);

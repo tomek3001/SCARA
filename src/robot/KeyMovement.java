@@ -68,41 +68,9 @@ public class KeyMovement extends Behavior{
    if (genericEvt instanceof WakeupOnAWTEvent)
    {
     ev = (WakeupOnAWTEvent) genericEvt;
-    events = ev.getAWTEvent();
-    processAWTEvent(events);
+    events = ev.getAWTEvent();    
    }
   }
-  
-  //Set wakeup criteria for next time
   wakeupOn(wakeupCondition);
- }
- 
- //Process a keyboard event
- private void processAWTEvent(AWTEvent[] events)
- {
-  for( int n = 0; n < events.length; n++)
-  {
-   if( events[n] instanceof KeyEvent)
-   {
-    KeyEvent eventKey = (KeyEvent) events[n];
-    
-    if( eventKey.getID() == KeyEvent.KEY_PRESSED )
-    {
-     int keyCode = eventKey.getKeyCode();
-     int keyChar = eventKey.getKeyChar();
-     
-     switch (keyCode)
-     {
-      case KeyEvent.VK_SPACE:
-          System.out.println("W LEWO");
-      break;
-      
-      case KeyEvent.VK_RIGHT:
-          System.out.println("W PRAWO");
-      break;
-     }
-    }
-   }
-  }
- }
+ } 
 }
