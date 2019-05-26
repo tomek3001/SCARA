@@ -229,14 +229,23 @@ public class Robot extends JFrame{
         //obracanie całego dzieła
         MouseRotate obracanie_cale = new MouseRotate();
         wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        obracanie_cale.setFactor(0.001);                                                //mnożnik ruchu
+        obracanie_cale.setFactor(0);                                                //mnożnik ruchu
         wezel_temp.addChild(obracanie_cale);
         obracanie_cale.setTransformGroup(wezel_temp);
         obracanie_cale.setSchedulingBounds(bounds);
         
         //Przesuwanie pionowego
-        
-        
+        MouseTranslate suwanie_pionowe = new MouseTranslate();
+        pionowy_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        suwanie_pionowe.setFactor(0, 0.1);
+        pionowy_tg.addChild(suwanie_pionowe);
+        suwanie_pionowe.setTransformGroup(pionowy_tg);
+        BoundingBox pionowy_ogr = new BoundingBox(new Point3d(0,0,0), new Point3d(1,1,1));
+        suwanie_pionowe.setSchedulingBounds(pionowy_ogr);
+        pionowy_tg.setCollisionBounds(pionowy_ogr);
+        pionowy_tg.setCollidable(true);
+        pionowy_tg.setCapability(TransformGroup.ALLOW_COLLIDABLE_READ);
+        pionowy_tg.setCapability(TransformGroup.ALLOW_COLLIDABLE_WRITE);
         
         
         
