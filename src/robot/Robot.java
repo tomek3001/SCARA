@@ -44,6 +44,15 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     float v_pionowe = 0.05f;  //Prędkość elementu ruchomego
     float w_gore = 0.0f, w_dol = 0.0f;
     public float a=0f, b=0.005f;
+    
+    MouseRotate obracanie_1 = new MouseRotate();
+    MouseRotate obracanie_cale = new MouseRotate();
+    MouseRotate obracanie_2 = new MouseRotate();
+    
+    
+    boolean spacja = true;
+    boolean control = true;
+    float mnoznik = 0.001f;
             
  
         
@@ -127,7 +136,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         Appearance wyglad_ramie_1 = new Appearance();
         wyglad_ramie_1.setMaterial(mat_ramie_1);
         
-        com.sun.j3d.utils.geometry.Box ramie_1 = new com.sun.j3d.utils.geometry.Box(3.0f, 0.1f, 1.0f, wyglad_ramie_1);
+        com.sun.j3d.utils.geometry.Box ramie_1 = new com.sun.j3d.utils.geometry.Box(3.0f, 0.3f, 1.0f, wyglad_ramie_1);
         p_ramie_1.set(new Vector3f(1.8f, 4.0f, 0.0f));
         ramie_1_tg.setTransform(p_ramie_1);
         matka_ramie_1_tg.addChild(ramie_1_tg);
@@ -140,25 +149,25 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         ramie_1_tg.addChild(matka_ramie_2_tg);
-        p_matka_ramie_2.set(new Vector3f(3.0f, 0.6f, 0.0f));
+        p_matka_ramie_2.set(new Vector3f(2.5f, 0.6f, 0.0f));
         matka_ramie_2_tg.setTransform(p_matka_ramie_2);
         
         
-        com.sun.j3d.utils.geometry.Box ramie_2 = new com.sun.j3d.utils.geometry.Box(1.0f, 0.5f, 3.0f, wyglad_ramie_2);
-        p_ramie_2.set(new Vector3f(0.0f, 0.0f, 2.5f));
+        com.sun.j3d.utils.geometry.Box ramie_2 = new com.sun.j3d.utils.geometry.Box(1.0f, 0.3f, 2.0f, wyglad_ramie_2);
+        p_ramie_2.set(new Vector3f(0.0f, 0.0f, 2f));
         ramie_2_tg.setTransform(p_ramie_2);
         matka_ramie_2_tg.addChild(ramie_2_tg);
         ramie_2_tg.addChild(ramie_2);
         
         
-        p_ramie_2_walec_1.set(new Vector3f(0f, 0f, -3f));
-        Cylinder ramie_2_walec_1 = new Cylinder(1.0f, 1f, wyglad_ramie_2);
+        p_ramie_2_walec_1.set(new Vector3f(0f, 0f, -2f));
+        Cylinder ramie_2_walec_1 = new Cylinder(1.0f, 0.6f, wyglad_ramie_1);
         ramie_2_walec_1_tg.setTransform(p_ramie_2_walec_1);
         ramie_2_tg.addChild(ramie_2_walec_1_tg);
         ramie_2_walec_1_tg.addChild(ramie_2_walec_1);
         
-        Cylinder ramie_2_walec_2 = new Cylinder(1.0f, 1f, wyglad_ramie_2);
-        p_ramie_2_walec_2.set(new Vector3f(0f, 0f, 3f));
+        Cylinder ramie_2_walec_2 = new Cylinder(1.0f, 0.6f, wyglad_ramie_1);
+        p_ramie_2_walec_2.set(new Vector3f(0f, 0f, 2f));
         ramie_2_walec_2_tg.setTransform(p_ramie_2_walec_2);
         ramie_2_walec_2_tg.addChild(ramie_2_walec_2);
         ramie_2_tg.addChild(ramie_2_walec_2_tg);
@@ -190,7 +199,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         //obracanie pierwszego ramienia
-        MouseRotate obracanie_1 = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
+                                           //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
         matka_ramie_1_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
         obracanie_1.setFactor(0, 0);                                                      //mnożnik ruchu 0 - brak obrotu
         obracanie_1.setTransformGroup(matka_ramie_1_tg);
@@ -198,19 +207,17 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         obracanie_1.setSchedulingBounds(bounds);
         
         
-        //obracanie drugiego ramienia
-        MouseRotate obracanie_2 = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
+        //obracanie drugiego ramienia                                 //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
         matka_ramie_2_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
-        obracanie_2.setFactor(0.005, 0);                                                      //mnożnik ruchu 0 - brak obrotu
+        obracanie_2.setFactor(0, 0);                                                      //mnożnik ruchu 0 - brak obrotu
         obracanie_2.setTransformGroup(matka_ramie_2_tg);
         wezel_temp.addChild(obracanie_2);
         obracanie_2.setSchedulingBounds(bounds);
         
         
         //obracanie całego dzieła
-        MouseRotate obracanie_cale = new MouseRotate();
         wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        obracanie_cale.setFactor(0);                                                //mnożnik ruchu
+        obracanie_cale.setFactor(mnoznik);                                                //mnożnik ruchu
         wezel_temp.addChild(obracanie_cale);
         obracanie_cale.setTransformGroup(wezel_temp);
         obracanie_cale.setSchedulingBounds(bounds);
@@ -279,8 +286,10 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
             case KeyEvent.VK_RIGHT  :     obrotPrawoMain(v_obrotu);     if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
             case KeyEvent.VK_D      :     obrotPrawoSecond(v_obrotu);   if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
             case KeyEvent.VK_A      :     obrotLewoSecond(v_obrotu);    if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
-            case KeyEvent.VK_DOWN   :      dol(v_pionowe);       break;
-            case KeyEvent.VK_UP     :      gora(v_pionowe);      break;
+            case KeyEvent.VK_DOWN   :     dol(v_pionowe);       break;
+            case KeyEvent.VK_UP     :     gora(v_pionowe);      break;
+            case KeyEvent.VK_SPACE  :     if(spacja&control){obrotRamie1(); spacja = false;};                                  break;
+            case KeyEvent.VK_CONTROL  :   if(control&spacja){obrotRamie2(); control = false;};                                  break;
         }
  
       //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -288,14 +297,44 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
 
     @Override
     public void keyReleased(KeyEvent e) {
-        {a=0f;
-        b=0.005f;
-            System.out.println("dabob");}
+        {
+        
+        switch(e.getKeyCode())                                                                          
+        {
+            case KeyEvent.VK_SPACE  :     if(!spacja&control){obrotRamie1_rev(); spacja = true;}; System.out.println("Narko"); 
+            case KeyEvent.VK_CONTROL  :   if(!control&spacja){obrotRamie2_rev(); control = true;}; System.out.println("Narko");                                  break;
+        }
         
         v_obrotu = 0.005f;
         
-      //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }//  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    private void obrotRamie1(){
+        obracanie_1.setFactor(mnoznik, 0);
+        obracanie_cale.setFactor(0);
+        System.out.println("Halko");
+    }
+    
+    private void obrotRamie1_rev(){
+        obracanie_1.setFactor(0);
+        obracanie_cale.setFactor(mnoznik);
+        System.out.println("Halko");
+    }
+    
+    
+        private void obrotRamie2(){
+        obracanie_2.setFactor(mnoznik, 0);
+        obracanie_cale.setFactor(0);
+        System.out.println("Halko");
+    }
+    
+        private void obrotRamie2_rev(){
+        obracanie_2.setFactor(0);
+        obracanie_cale.setFactor(mnoznik);
+        System.out.println("Halko");
+    }
+    
     
     
     private void obrotLewoMain(float krok){
@@ -324,7 +363,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     }
     private void gora(float krok){   
       w_gore = w_gore+krok; 
-      p_pionowy.setTranslation(new Vector3f(0.0f, 1.0f+w_gore, 3.0f));
+      p_pionowy.setTranslation(new Vector3f(0.0f, 0.1f+w_gore, 0.0f));
       pionowy_tg.setTransform(p_pionowy);   
     }
     private void dol(float krok){
