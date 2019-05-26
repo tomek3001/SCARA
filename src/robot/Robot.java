@@ -76,52 +76,7 @@ public class Robot extends JFrame{
         
         
         //OSIE GŁÓWNE////////////////////////////////////////////////////////////////////////////////////////////////
-        float axisPosition [] = new float[]{2.0f,2.0f,2.0f};              // X = 0, Y = 1, Z = 2 Y nie używamy
-        TransformGroup mainAxisAll = new TransformGroup();
         
-        Transform3D tmp_X = new Transform3D();
-        Transform3D tmp_Y = new Transform3D();                                      //Nie używamy tego ale nie uwuwam bo może się przydać
-        Transform3D tmp_Z = new Transform3D();
-        
-        
-        Appearance  wygladOsX = new Appearance();
-        wygladOsX.setColoringAttributes(new ColoringAttributes(1.0f,0.0f,0.0f,ColoringAttributes.NICEST));
-        Cylinder mainAxisX = new Cylinder(0.05f, 4.0f, wygladOsX);                  //Opis głownej osi X                                                 
-        Transform3D  p_mainAxisX   = new Transform3D();                             //  
-        p_mainAxisX.set(new Vector3f(0.0f,0.0f,2.0f));                             //Przesuwamy o połowę długości mainAxisX   
-        tmp_X.rotX(Math.PI/2);                                                      //Obrót o kąt 90 stopni
-        p_mainAxisX.mul(tmp_X);                                                     //
-        TransformGroup transformacja_oX = new TransformGroup(p_mainAxisX);          //
-        transformacja_oX.addChild(mainAxisX);                                       //
-        //wezel_temp.addChild(transformacja_oX);                                      //
-        
-        
-        Appearance  wygladOsY = new Appearance();
-        wygladOsY.setColoringAttributes(new ColoringAttributes(0.0f,1.0f,0.0f,ColoringAttributes.NICEST));
-        Cylinder mainAxisY = new Cylinder(0.05f, 4.0f, wygladOsY);                   //Opis głownej osi Y                                                 
-        Transform3D  p_mainAxisY   = new Transform3D();                             // 
-        p_mainAxisY.set(new Vector3f(0.0f,2.0f,0.0f));                              //Przesuwamy o połowę długości mainAxisY
-        TransformGroup transformacja_oY = new TransformGroup(p_mainAxisY);          //
-        transformacja_oY.addChild(mainAxisY);                                       //
-        //wezel_temp.addChild(transformacja_oY);                                     //
-
-        
-       
-        Appearance  wygladOsZ = new Appearance();
-        wygladOsZ.setColoringAttributes(new ColoringAttributes(0.0f,0.0f,1.0f,ColoringAttributes.NICEST));
-        Cylinder mainAxisZ = new Cylinder(0.05f, 4.0f, wygladOsZ);                  //Opis głownej osi Z                                                 
-        Transform3D  p_mainAxisZ   = new Transform3D();                             // 
-        p_mainAxisZ.set(new Vector3f(2.0f,0.0f,0.0f));                              //Przesuwamy o połowę długości mainAxisZ
-        tmp_Z.rotZ(Math.PI/2);                                                      //Obrót o kąt 90 stopni
-        p_mainAxisZ.mul(tmp_Z);                                                     //
-        TransformGroup transformacja_oZ = new TransformGroup(p_mainAxisZ);          //
-        transformacja_oZ.addChild(mainAxisZ);                                       //
-        //wezel_temp.addChild(transformacja_oZ);                                      //
-        
-        mainAxisAll.addChild(transformacja_oX);                                     //Tworzenie rodzica dla całej osi głównej
-        mainAxisAll.addChild(transformacja_oY);
-        mainAxisAll.addChild(transformacja_oZ);
-        wezel_temp.addChild(mainAxisAll);
         
         //OŚ DRUGIEGO ELEMENTU ( TEŻ OBROTOWA)////////////////////////////////////////////////////////////////////////////////////////////////
 //        Cylinder secondAxisX = new Cylinder(0.05f, 4.0f, wygladOsX);                //Opis drugiej osi X    
@@ -153,6 +108,18 @@ public class Robot extends JFrame{
         //secondAxisAll.addChild(transformacja_oZ2);
         
         
+        
+        //Podstawa
+        Appearance wyglad_podstawa = new Appearance();
+        wyglad_podstawa.setMaterial(new Material());
+        
+        TransformGroup podstawa_tg = new TransformGroup();
+        wezel_temp.addChild(podstawa_tg);
+        Cylinder podstawa = new Cylinder(0.8f, 4, wyglad_podstawa);
+        podstawa_tg.addChild(podstawa);
+        Transform3D p_podstawa = new Transform3D();
+        p_podstawa.set(new Vector3f(0.0f, 2.0f, 0.0f));
+        podstawa_tg.setTransform(p_podstawa);
         
         
         //Pierwszy element ramienia
@@ -194,6 +161,10 @@ public class Robot extends JFrame{
         matka_ramie_2_tg.addChild(ramie_2_tg);
         ramie_2_tg.addChild(ramie_2);
         
+        //Łączenie ramion
+        Cylinder polaczenie_1_2 = new Cylinder(0.1f, 0.4f, wyglad_podstawa);
+        matka_ramie_2_tg.addChild(polaczenie_1_2);
+        
         
         //Pionowy suwak
         
@@ -219,9 +190,9 @@ public class Robot extends JFrame{
         
         //obracanie pierwszego ramienia
         MouseRotate obracanie_1 = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
-        matka_ramie_2_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
+        matka_ramie_1_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
         obracanie_1.setFactor(0.05, 0);                                                      //mnożnik ruchu 0 - brak obrotu
-        obracanie_1.setTransformGroup(matka_ramie_2_tg);
+        obracanie_1.setTransformGroup(matka_ramie_1_tg);
         wezel_temp.addChild(obracanie_1);
         obracanie_1.setSchedulingBounds(bounds);
         
@@ -229,7 +200,7 @@ public class Robot extends JFrame{
         //obracanie całego dzieła
         MouseRotate obracanie_cale = new MouseRotate();
         wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        obracanie_cale.setFactor(0);                                                //mnożnik ruchu
+        obracanie_cale.setFactor(0.01);                                                //mnożnik ruchu
         wezel_temp.addChild(obracanie_cale);
         obracanie_cale.setTransformGroup(wezel_temp);
         obracanie_cale.setSchedulingBounds(bounds);
