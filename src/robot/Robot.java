@@ -17,6 +17,9 @@ import java.awt.event.*;
 
 public class Robot extends JFrame implements ActionListener, KeyListener{
 
+    
+    public float a=0f, b=0.005f;
+            
     Vector3f pierwsze_ramie = new Vector3f(1.8f, 4.0f, 0.0f);
         
         
@@ -158,17 +161,35 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         TransformGroup matka_ramie_2_tg = new TransformGroup();             //transformgroup obracający się i zawierający ramię
         ramie_1_tg.addChild(matka_ramie_2_tg);
         Transform3D p_matka_ramie_2 = new Transform3D();
-        p_matka_ramie_2.set(new Vector3f(2.0f, 0.2f, 0.0f));
+        p_matka_ramie_2.set(new Vector3f(3.0f, 0.6f, 0.0f));
         matka_ramie_2_tg.setTransform(p_matka_ramie_2);
         
         
         TransformGroup ramie_2_tg = new TransformGroup();                   //tansfromgroup z ramieniem 2 przesuniętym
-        com.sun.j3d.utils.geometry.Box ramie_2 = new com.sun.j3d.utils.geometry.Box(1.0f, 0.1f, 3.0f, wyglad_ramie_2);
+        com.sun.j3d.utils.geometry.Box ramie_2 = new com.sun.j3d.utils.geometry.Box(1.0f, 0.5f, 3.0f, wyglad_ramie_2);
         Transform3D p_ramie_2 = new Transform3D();
-        p_ramie_2.set(new Vector3f(0.0f, 0.0f, 2.0f));
+        p_ramie_2.set(new Vector3f(0.0f, 0.0f, 2.5f));
         ramie_2_tg.setTransform(p_ramie_2);
         matka_ramie_2_tg.addChild(ramie_2_tg);
         ramie_2_tg.addChild(ramie_2);
+        
+        
+        TransformGroup ramie_2_walec_1_tg = new TransformGroup();
+        Transform3D p_ramie_2_walec_1 = new Transform3D();
+        p_ramie_2_walec_1.set(new Vector3f(0f, 0f, -3f));
+        Cylinder ramie_2_walec_1 = new Cylinder(1.0f, 1f, wyglad_ramie_2);
+        ramie_2_walec_1_tg.setTransform(p_ramie_2_walec_1);
+        ramie_2_tg.addChild(ramie_2_walec_1_tg);
+        ramie_2_walec_1_tg.addChild(ramie_2_walec_1);
+        
+        Cylinder ramie_2_walec_2 = new Cylinder(1.0f, 1f, wyglad_ramie_2);
+        TransformGroup ramie_2_walec_2_tg = new TransformGroup();
+        Transform3D p_ramie_2_walec_2 = new Transform3D();
+        p_ramie_2_walec_2.set(new Vector3f(0f, 0f, 3f));
+        ramie_2_walec_2_tg.setTransform(p_ramie_2_walec_2);
+        ramie_2_walec_2_tg.addChild(ramie_2_walec_2);
+        ramie_2_tg.addChild(ramie_2_walec_2_tg);
+        
         
         
         //Łączenie ramion
@@ -188,19 +209,19 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         ramie_2_tg.addChild(pionowy_tg);
         pionowy_tg.addChild(pionowy);
         Transform3D p_pionowy = new Transform3D();
-        p_pionowy.set(new Vector3f(0.0f, 1.0f, (ramie_2.getZdimension())-(ramie_2.getZdimension())/4 ));
+        p_pionowy.set(new Vector3f(0.0f, 1.0f, (ramie_2.getZdimension()) ));
         pionowy_tg.setTransform(p_pionowy);
         
         
         
         
-        //Działanie MYSZY////////////////////////////////////////////////////////////////////////////////////////////////
+        //Działanie MYSZY//////////// ////////////////////////////////////////////////////////////////////////////////////
         
         
         //obracanie pierwszego ramienia
         MouseRotate obracanie_1 = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
         matka_ramie_1_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
-        obracanie_1.setFactor(0, 0);                                                      //mnożnik ruchu 0 - brak obrotu
+        obracanie_1.setFactor(a, 0);                                                      //mnożnik ruchu 0 - brak obrotu
         obracanie_1.setTransformGroup(matka_ramie_1_tg);
         wezel_temp.addChild(obracanie_1);
         obracanie_1.setSchedulingBounds(bounds);
@@ -209,7 +230,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         //obracanie drugiego ramienia
         MouseRotate obracanie_2 = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
         matka_ramie_2_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
-        obracanie_2.setFactor(0.005, 0);                                                      //mnożnik ruchu 0 - brak obrotu
+        obracanie_2.setFactor(b, 0);                                                      //mnożnik ruchu 0 - brak obrotu
         obracanie_2.setTransformGroup(matka_ramie_2_tg);
         wezel_temp.addChild(obracanie_2);
         obracanie_2.setSchedulingBounds(bounds);
@@ -278,7 +299,10 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_SPACE)
-            System.out.println("COS DZIAŁA");
+            
+        {a=0.005f;
+        b=0;
+            System.out.println("abba");}
         else if(e.getKeyCode()== KeyEvent.VK_LEFT)
         {
             
@@ -288,6 +312,10 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
 
     @Override
     public void keyReleased(KeyEvent e) {
+        {a=0f;
+        b=0.005f;
+            System.out.println("dabob");}
+        
       //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
