@@ -40,7 +40,9 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     
     float kat1 = 0.0f;      // Kąt początkowy
     float kat2 = 0.0f;      //Dla wszystkich
-    float v_obrotu = 0.11f;  //Prędkość obrotu
+    float v_obrotu = 0.005f;  //Prędkość obrotu
+    float v_pionowe = 0.05f;  //Prędkość elementu ruchomego
+    float w_gore = 0.0f, w_dol = 0.0f;
     public float a=0f, b=0.005f;
             
  
@@ -85,7 +87,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         Point3d punkcik = new Point3d(0,0,0);  
         BranchGroup wezel_scena = new BranchGroup();
         
-        BoundingSphere bounds = new BoundingSphere(punkcik,1000000);
+        BoundingSphere bounds = new BoundingSphere(punkcik,1000);
         
       //ŚWIATŁO////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       
@@ -271,12 +273,14 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     @Override
     public void keyPressed(KeyEvent e) {
         
-        switch(e.getKeyCode())
+        switch(e.getKeyCode())                                                                          
         {
-            case KeyEvent.VK_LEFT   :     obrotLewoMain(v_obrotu);     break;   
-            case KeyEvent.VK_RIGHT  :     obrotPrawoMain(v_obrotu);    break;
-            case KeyEvent.VK_A      :     obrotLewoSecond(v_obrotu);   break;
-            case KeyEvent.VK_D      :     obrotPrawoSecond(v_obrotu);  break;
+            case KeyEvent.VK_LEFT   :     obrotLewoMain(v_obrotu);      if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;   
+            case KeyEvent.VK_RIGHT  :     obrotPrawoMain(v_obrotu);     if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
+            case KeyEvent.VK_D      :     obrotPrawoSecond(v_obrotu);   if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
+            case KeyEvent.VK_A      :     obrotLewoSecond(v_obrotu);    if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
+            case KeyEvent.VK_DOWN   :      dol(v_pionowe);       break;
+            case KeyEvent.VK_UP     :      gora(v_pionowe);      break;
         }
  
       //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -288,6 +292,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         b=0.005f;
             System.out.println("dabob");}
         
+        v_obrotu = 0.005f;
+        
       //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -296,21 +302,19 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
      kat1 += krok;    
       p_ramie_1.rotY(kat1);
       //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
-      matka_ramie_1_tg.setTransform(p_ramie_1);
-   
+      matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotPrawoMain(float krok){
      kat1 -= krok;    
       p_ramie_1.rotY(kat1);
       //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
-      matka_ramie_1_tg.setTransform(p_ramie_1);
+      matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotLewoSecond(float krok){
       kat2 += krok;    
       p_ramie_2.rotY(kat2);
       p_ramie_2.setTranslation(new Vector3f(3.0f, 0.6f, 0.0f));
-      matka_ramie_2_tg.setTransform(p_ramie_2);
-   
+      matka_ramie_2_tg.setTransform(p_ramie_2); 
     }
     private void obrotPrawoSecond(float krok){
       kat2 -= krok;    
@@ -318,6 +322,17 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
       p_ramie_2.setTranslation(new Vector3f(3.0f, 0.6f, 0.0f));
       matka_ramie_2_tg.setTransform(p_ramie_2);
     }
+    private void gora(float krok){   
+      w_gore = w_gore+krok; 
+      p_pionowy.setTranslation(new Vector3f(0.0f, 1.0f+w_gore, 3.0f));
+      pionowy_tg.setTransform(p_pionowy);   
+    }
+    private void dol(float krok){
+      w_gore = w_gore- krok; 
+      p_pionowy.setTranslation(new Vector3f(0.0f, 1.0f+w_gore, 3.0f));
+      pionowy_tg.setTransform(p_pionowy);    
+    }
+    
     
 }
 
