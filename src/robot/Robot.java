@@ -37,7 +37,7 @@ public class Robot extends JFrame{
         SimpleUniverse simpleU = new SimpleUniverse(canvas3D);
 
         Transform3D przesuniecie_obserwatora = new Transform3D();       //USTAWIAMY OBSERWATORA W DOMYŚLNEJ POZYCJI
-        przesuniecie_obserwatora.set(new Vector3f(0.0f,0.0f,20.0f));
+        przesuniecie_obserwatora.set(new Vector3f(0.0f,5.0f,30.0f));
 
         simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
 
@@ -76,6 +76,8 @@ public class Robot extends JFrame{
         Transform3D tmp_X = new Transform3D();
         Transform3D tmp_Y = new Transform3D();                                      //Nie używamy tego ale nie uwuwam bo może się przydać
         Transform3D tmp_Z = new Transform3D();
+        
+        
         Appearance  wygladOsX = new Appearance();
         wygladOsX.setColoringAttributes(new ColoringAttributes(1.0f,0.0f,0.0f,ColoringAttributes.NICEST));
         Cylinder mainAxisX = new Cylinder(0.05f, 4.0f, wygladOsX);                  //Opis głownej osi X                                                 
@@ -150,11 +152,14 @@ public class Robot extends JFrame{
         
         
         //Działanie MYSZY////////////////////////////////////////////////////////////////////////////////////////////////
-        MouseRotate behavior = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
+        MouseRotate obracanie_1 = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
         wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        behavior.setTransformGroup(wezel_temp);
-        wezel_temp.addChild(behavior);
-        behavior.setSchedulingBounds(bounds);
+        secondAxisAll.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        obracanie_1.setFactor(0.1, 0);
+        obracanie_1.setTransformGroup(secondAxisAll);
+        secondAxisAll.addChild(obracanie_1);
+        obracanie_1.setSchedulingBounds(bounds);
+        
         
         MouseWheelZoom zoom = new MouseWheelZoom();                                 //PRZYBLIŻANIE I ODDALANIE
         zoom.setTransformGroup(wezel_temp);
