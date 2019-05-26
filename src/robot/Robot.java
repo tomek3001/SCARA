@@ -178,7 +178,7 @@ public class Robot extends JFrame{
       new Robot();
 
    }
-     //Dodaje komentarz EE KURWA WELCOME TO THE SUMMONER'S RIFT
+    
 }
 
 
