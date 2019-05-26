@@ -52,19 +52,23 @@ public class Robot extends JFrame{
         
         BoundingSphere bounds = new BoundingSphere(punkcik,10000);
         
-        
-        
       //ŚWIATŁO////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       
-      AmbientLight lightA = new AmbientLight();
-      lightA.setInfluencingBounds(bounds);
-      wezel_temp.addChild(lightA);
+      //AmbientLight lightA = new AmbientLight();
+      //lightA.setInfluencingBounds(bounds);
+      //wezel_temp.addChild(lightA);
 
       DirectionalLight lightD = new DirectionalLight();
       lightD.setInfluencingBounds(bounds);
       lightD.setDirection(new Vector3f(0.0f, 0.0f, -2.0f));
       lightD.setColor(new Color3f(1.0f, 1.0f, 1.0f));
       wezel_temp.addChild(lightD);
+      
+      DirectionalLight lightD2 = new DirectionalLight();
+      lightD2.setInfluencingBounds(bounds);
+      lightD2.setDirection(new Vector3f(0.0f,0.0f, -20.0f));
+      lightD2.setColor(new Color3f(1.0f, 0.0f, 1.0f));
+      wezel_scena.addChild(lightD2);
         
         
         
@@ -142,23 +146,52 @@ public class Robot extends JFrame{
         transformacja_oZ2.addChild(secondAxisZ);                                       //
       
         
-        secondAxisAll.addChild(transformacja_oX2);                                     //Tworzenie rodzica dla całej osi drugiej
-        secondAxisAll.addChild(transformacja_oY2);
-        secondAxisAll.addChild(transformacja_oZ2);
+        //secondAxisAll.addChild(transformacja_oX2);                                     //Tworzenie rodzica dla całej osi drugiej
+        //secondAxisAll.addChild(transformacja_oY2);
+        //secondAxisAll.addChild(transformacja_oZ2);
         
         wezel_temp.addChild(secondAxisAll);
         
         
         
+        //Pierwszy element ramienia
+        Material mat_ramie_1 = new Material(new Color3f(0.2f, 0.3f, 0.1f), new Color3f(0.7f, 0.1f, 0.0f), new Color3f(0.4f, 0.9f, 0.1f), new Color3f(0.3f, 0.9f, 0.1f), 50.0f);
+        Appearance wyglad_ramie_1 = new Appearance();
+        wyglad_ramie_1.setMaterial(mat_ramie_1);
+        
+        TransformGroup ramie_1_tg = new TransformGroup();
+        com.sun.j3d.utils.geometry.Box ramie_1 = new com.sun.j3d.utils.geometry.Box(3.0f, 0.1f, 1.0f, wyglad_ramie_1);
+        Transform3D p_ramie_1 = new Transform3D();
+        p_ramie_1.set(new Vector3f(1.8f, 4.0f, 0.0f));
+        ramie_1_tg.setTransform(p_ramie_1);
+        secondAxisAll.addChild(ramie_1_tg);
+        ramie_1_tg.addChild(ramie_1);
+        
+        
+        
         
         //Działanie MYSZY////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        
+        //obracanie pierwszego ramienia
         MouseRotate obracanie_1 = new MouseRotate();                                   //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
-        wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        secondAxisAll.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        obracanie_1.setFactor(0.1, 0);
+        secondAxisAll.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
+        obracanie_1.setFactor(0);                                                      //mnożnik ruchu 0 - brak obrotu
         obracanie_1.setTransformGroup(secondAxisAll);
         secondAxisAll.addChild(obracanie_1);
         obracanie_1.setSchedulingBounds(bounds);
+        
+        
+        //obracanie całego dzieła
+        MouseRotate obracanie_cale = new MouseRotate();
+        wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        obracanie_cale.setFactor(0.01);                                                //mnożnik ruchu
+        wezel_temp.addChild(obracanie_cale);
+        obracanie_cale.setTransformGroup(wezel_temp);
+        obracanie_cale.setSchedulingBounds(bounds);
+        
+        
+        
         
         
         MouseWheelZoom zoom = new MouseWheelZoom();                                 //PRZYBLIŻANIE I ODDALANIE
