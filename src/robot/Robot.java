@@ -22,8 +22,10 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     TransformGroup wezel_temp = new TransformGroup();   
     TransformGroup podstawa_tg = new TransformGroup();
     TransformGroup matka_ramie_1_tg = new TransformGroup();                                //transformgroup obracający się i zawierający ramię
+    TransformGroup matka_ramie_1_tg_mysz = new TransformGroup();
     TransformGroup ramie_1_tg = new TransformGroup();                                      //transformgroup z ramieniem przesuniętym
     TransformGroup matka_ramie_2_tg = new TransformGroup();             //transformgroup obracający się i zawierający ramię
+    TransformGroup matka_ramie_2_tg_mysz = new TransformGroup(); 
     TransformGroup ramie_2_tg = new TransformGroup();                   //tansfromgroup z ramieniem 2 przesuniętym
     TransformGroup ramie_2_walec_1_tg = new TransformGroup();
     TransformGroup ramie_2_walec_2_tg = new TransformGroup();
@@ -35,6 +37,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     Transform3D przesuniecie_obserwatora = new Transform3D();       //USTAWIAMY OBSERWATORA W DOMYŚLNEJ POZYCJI
     Transform3D p_podstawa = new Transform3D();
     Transform3D p_matka_ramie_2 = new Transform3D();
+    Transform3D p_matka_ramie_2_mysz = new Transform3D();
     Transform3D p_ramie_2 = new Transform3D();
     Transform3D p_ramie_2_walec_1 = new Transform3D();
     Transform3D p_ramie_2_walec_2 = new Transform3D();
@@ -134,7 +137,9 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         //Pierwszy element ramienia
-        wezel_temp.addChild(matka_ramie_1_tg);
+        wezel_temp.addChild(matka_ramie_1_tg_mysz);
+        
+        matka_ramie_1_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE); 
         
         Material mat_ramie_1 = new Material(new Color3f(0.2f, 0.3f, 0.1f), new Color3f(0.57f, 0.57f, 0.57f), new Color3f(0.4f, 0.9f, 0.1f), new Color3f(0.3f, 0.9f, 0.1f), 50.0f);
         Appearance wyglad_ramie_1 = new Appearance();
@@ -147,6 +152,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         com.sun.j3d.utils.geometry.Box ramie_1 = new com.sun.j3d.utils.geometry.Box(2.0f, 0.3f, 1.0f, wyglad_ramie_1);
         p_ramie_1.set(new Vector3f(2f, 4.0f, 0.0f));
         ramie_1_tg.setTransform(p_ramie_1);
+        matka_ramie_1_tg_mysz.addChild(matka_ramie_1_tg);
         matka_ramie_1_tg.addChild(ramie_1_tg);
         ramie_1_tg.addChild(ramie_1);
         
@@ -168,11 +174,17 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         //Drugi element ramienia
 
+        matka_ramie_2_tg_mysz.addChild(matka_ramie_2_tg);
+        
+        p_matka_ramie_2_mysz.set(new Vector3f(2f, 0.6f, 0.0f));
+        matka_ramie_2_tg_mysz.setTransform(p_matka_ramie_2_mysz);
         
         
-        ramie_1_tg.addChild(matka_ramie_2_tg);
-        p_matka_ramie_2.set(new Vector3f(2f, 0.6f, 0.0f));
-        matka_ramie_2_tg.setTransform(p_matka_ramie_2);
+        ramie_1_tg.addChild(matka_ramie_2_tg_mysz);
+        //p_matka_ramie_2.set(new Vector3f(2f, 0.6f, 0.0f));
+        //matka_ramie_2_tg.setTransform(p_matka_ramie_2);
+        
+        matka_ramie_2_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         
         
         com.sun.j3d.utils.geometry.Box ramie_2 = new com.sun.j3d.utils.geometry.Box(1.0f, 0.3f, 2.0f, wyglad_ramie_2);
@@ -197,8 +209,14 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         //Łączenie ramion
-        Cylinder polaczenie_1_2 = new Cylinder(0.1f, 0.4f, wyglad_podstawa);
-        matka_ramie_2_tg.addChild(polaczenie_1_2);
+        Cylinder polaczenie_1_2_c = new Cylinder(0.23f, 0.7f, wyglad_podstawa);
+        Sphere polaczenie_1_2_s = new Sphere(0.23f, 1, 100, wyglad_podstawa);
+        Transform3D p_polaczenie_1_2_s = new Transform3D();
+        p_polaczenie_1_2_s.set(new Vector3f(0.0f, 0.35f, 0.0f));
+        TransformGroup polaczenie_1_2_s_tg = new TransformGroup(p_polaczenie_1_2_s);
+        polaczenie_1_2_s_tg.addChild(polaczenie_1_2_s);
+        matka_ramie_2_tg.addChild(polaczenie_1_2_s_tg);
+        matka_ramie_2_tg.addChild(polaczenie_1_2_c);
         
         
         //Pionowy suwak
@@ -223,17 +241,17 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         //obracanie pierwszego ramienia
                                            //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
-        matka_ramie_1_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
+        matka_ramie_1_tg_mysz.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
         obracanie_1.setFactor(0, 0);                                                      //mnożnik ruchu 0 - brak obrotu
-        obracanie_1.setTransformGroup(matka_ramie_1_tg);
+        obracanie_1.setTransformGroup(matka_ramie_1_tg_mysz);
         wezel_temp.addChild(obracanie_1);
         obracanie_1.setSchedulingBounds(bounds);
         
         
         //obracanie drugiego ramienia                                 //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
-        matka_ramie_2_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
+        matka_ramie_2_tg_mysz.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
         obracanie_2.setFactor(0, 0);                                                      //mnożnik ruchu 0 - brak obrotu
-        obracanie_2.setTransformGroup(matka_ramie_2_tg);
+        obracanie_2.setTransformGroup(matka_ramie_2_tg_mysz);
         wezel_temp.addChild(obracanie_2);
         obracanie_2.setSchedulingBounds(bounds);
         
@@ -246,14 +264,14 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         obracanie_cale.setSchedulingBounds(bounds);
         
         //Przesuwanie pionowego
-        MouseTranslate suwanie_pionowe = new MouseTranslate();
-        pionowy_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        suwanie_pionowe.setFactor(0, mnoznik*3);
-        pionowy_tg.addChild(suwanie_pionowe);
-        suwanie_pionowe.setTransformGroup(pionowy_tg);
-        BoundingSphere bounds2 = new BoundingSphere(punkcik, 0.00001);
-        ramie_2_tg.setBounds(bounds2);
-        suwanie_pionowe.setSchedulingBounds(bounds2);
+//        MouseTranslate suwanie_pionowe = new MouseTranslate();
+//        pionowy_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+//        suwanie_pionowe.setFactor(0, mnoznik*3);
+//        pionowy_tg.addChild(suwanie_pionowe);
+//        suwanie_pionowe.setTransformGroup(pionowy_tg);
+//        BoundingSphere bounds2 = new BoundingSphere(punkcik, 0.00001);
+//        ramie_2_tg.setBounds(bounds2);
+//        suwanie_pionowe.setSchedulingBounds(bounds2);
         
         
         
@@ -375,13 +393,11 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     private void obrotLewoSecond(float krok){
       kat2 += krok;    
       p_ramie_2.rotY(kat2);
-      p_ramie_2.setTranslation(new Vector3f(2f, 0.6f, 0.0f));
       matka_ramie_2_tg.setTransform(p_ramie_2); 
     }
     private void obrotPrawoSecond(float krok){
       kat2 -= krok;    
       p_ramie_2.rotY(kat2);
-      p_ramie_2.setTranslation(new Vector3f(2f, 0.6f, 0.0f));
       matka_ramie_2_tg.setTransform(p_ramie_2);
     }
     private void gora(float krok){   
