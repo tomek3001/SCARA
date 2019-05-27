@@ -9,10 +9,12 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 import javax.media.j3d.Transform3D;
 import javax.vecmath.*;
 import javax.vecmath.Point3d;
-import com.sun.j3d.utils.behaviors.mouse.*;
 import com.sun.j3d.utils.behaviors.keyboard.*;
+import com.sun.j3d.utils.behaviors.mouse.*;
+import com.sun.j3d.utils.image.TextureLoader;
 import java.awt.event.ActionEvent;
 import java.awt.event.*;
+
 
 
 
@@ -117,7 +119,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
       lightD.setInfluencingBounds(bounds);
       lightD.setDirection(new Vector3f(-5.70f, 0.3f, -2.0f));
       lightD.setColor(new Color3f(1.0f, 1.0f, 1.0f));
-      wezel_temp.addChild(lightD);
+      wezel_scena.addChild(lightD);
       
       DirectionalLight lightD2 = new DirectionalLight();
       lightD2.setInfluencingBounds(bounds);
@@ -132,7 +134,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         wyglad_noga_robota.setMaterial(mat_noga_robota);
         
         wezel_temp.addChild(noga_robota_tg);
-        Cylinder noga_robota = new Cylinder(0.8f, 4, 1, 1000, 1000, wyglad_noga_robota);
+        Cylinder noga_robota = new Cylinder(0.8f, 3.9f, 1, 1000, 1000, wyglad_noga_robota);
         noga_robota_tg.addChild(noga_robota);
         p_noga_robota.set(new Vector3f(0.0f, 2.0f, 0.0f));
         noga_robota_tg.setTransform(p_noga_robota);
@@ -141,17 +143,35 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         wezel_temp.addChild(stolik_tg);
         
+        
+        
+        
+        TextureLoader loader = new TextureLoader("obrazki/stachu.jpg",this);
+        ImageComponent2D image = loader.getImage();
+
+        Texture2D murek = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
+                                        image.getWidth(), image.getHeight());
+        murek.setImage(0, image);
+        murek.setBoundaryModeS(Texture.WRAP);
+        murek.setBoundaryModeT(Texture.WRAP);
+        Appearance wyglad_blat = new Appearance();
+        wyglad_blat.setTexture(murek);
+        
+        
+        
+        
+        
         float blat_x, blat_y, blat_z;
-        blat_x = 3f;
+        blat_x = 5.3243243243243243243243243243243f;
         blat_y = 0.3f;
         blat_z = 3;
         
-        com.sun.j3d.utils.geometry.Box blat = new com.sun.j3d.utils.geometry.Box(blat_x, blat_y, blat_z, wyglad_noga_robota);
+        com.sun.j3d.utils.geometry.Box blat = new com.sun.j3d.utils.geometry.Box(blat_x, blat_y, blat_z, com.sun.j3d.utils.geometry.Box.GENERATE_NORMALS|com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS, wyglad_blat);
         
-        
+        //blat_x, blat_y, blat_z, wyglad_noga_robota
         
         Transform3D p_blat = new Transform3D();
-        p_blat.set(new Vector3f(0.0f, blat_y, 0.0f));
+        p_blat.set(new Vector3f(0.0f, blat_y, 0.01f));
         TransformGroup blat_tg = new TransformGroup(p_blat);
         blat_tg.addChild(blat);
         stolik_tg.addChild(blat_tg);
@@ -159,7 +179,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         
-        com.sun.j3d.utils.geometry.Box noga_1 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_x*0.1f, wyglad_noga_robota);
+        com.sun.j3d.utils.geometry.Box noga_1 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_z*0.1f, wyglad_noga_robota);
         Transform3D p_noga_1 = new Transform3D();
         p_noga_1.set(new Vector3f(blat_x*0.8f, -5f*blat_y, blat_z*0.8f));
         TransformGroup noga_1_tg = new TransformGroup(p_noga_1);
@@ -167,7 +187,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         stolik_tg.addChild(noga_1_tg);
         
         
-        com.sun.j3d.utils.geometry.Box noga_2 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_x*0.1f, wyglad_noga_robota);
+        com.sun.j3d.utils.geometry.Box noga_2 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_z*0.1f, wyglad_noga_robota);
         Transform3D p_noga_2 = new Transform3D();
         p_noga_2.set(new Vector3f(blat_x*0.8f, -5f*blat_y, -blat_z*0.8f));
         TransformGroup noga_2_tg = new TransformGroup(p_noga_2);
@@ -175,7 +195,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         stolik_tg.addChild(noga_2_tg);
         
         
-        com.sun.j3d.utils.geometry.Box noga_3 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_x*0.1f, wyglad_noga_robota);
+        com.sun.j3d.utils.geometry.Box noga_3 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_z*0.1f, wyglad_noga_robota);
         Transform3D p_noga_3 = new Transform3D();
         p_noga_3.set(new Vector3f(-blat_x*0.8f, -5f*blat_y, blat_z*0.8f));
         TransformGroup noga_3_tg = new TransformGroup(p_noga_3);
@@ -183,7 +203,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         stolik_tg.addChild(noga_3_tg);
         
         
-        com.sun.j3d.utils.geometry.Box noga_4 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_x*0.1f, wyglad_noga_robota);
+        com.sun.j3d.utils.geometry.Box noga_4 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_z*0.1f, wyglad_noga_robota);
         Transform3D p_noga_4 = new Transform3D();
         p_noga_4.set(new Vector3f(-blat_x*0.8f, -5f*blat_y, -blat_z*0.8f));
         TransformGroup noga_4_tg = new TransformGroup(p_noga_4);
