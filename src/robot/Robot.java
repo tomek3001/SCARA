@@ -20,6 +20,9 @@ import java.awt.event.*;
 
 public class Robot extends JFrame implements ActionListener, KeyListener{
     
+    
+    
+   
     //WSZYSTKIE DEKLARACJE ZMIENNYCH////////////////////////////////////////////////////////////////////////
 
     TransformGroup wezel_temp = new TransformGroup();   
@@ -65,7 +68,13 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     boolean control = true;
     float mnoznik = 0.001f;
             
- 
+    
+    JButton main_left = new JButton("<<<<<");
+    JButton main_right = new JButton(">>>>>");
+    JButton child_left = new JButton("<<<<<");
+    JButton child_right = new JButton(">>>>>");
+    
+    
         
         
     Robot(){
@@ -75,12 +84,35 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(true);
 
-    
+        
         GraphicsConfiguration config =
            SimpleUniverse.getPreferredConfiguration();
 
         Canvas3D canvas3D = new Canvas3D(config);
-        canvas3D.setPreferredSize(new Dimension(800,600));          //ROZMIAR OKNA
+        
+        
+        //DODANIE PANELU AKCJI-------------------------------------------------------------------------------------        
+        JPanel panelOfSettings = new JPanel();
+        panelOfSettings.setLayout(new GridLayout(3, 2,10,10));
+        
+        main_left.addActionListener(this);
+        main_right.addActionListener(this);
+        child_left.addActionListener(this);
+        child_right.addActionListener(this);
+        
+        panelOfSettings.add(main_left);
+        panelOfSettings.add(main_right);
+        panelOfSettings.add(child_left);
+        panelOfSettings.add(child_right);
+    
+        
+        
+        
+        
+
+          add("East", panelOfSettings);
+         //------------------------------------------------------------------------------------------------------
+        canvas3D.setPreferredSize(new Dimension(900,700));          //ROZMIAR OKNA
 
         add(canvas3D);
         pack();
@@ -100,6 +132,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         canvas3D.addKeyListener(this);
         add(BorderLayout.CENTER, canvas3D);
+      
+
         
 
     }
@@ -146,7 +180,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         
-        TextureLoader loader = new TextureLoader("obrazki/stachu.jpg",this);
+        TextureLoader loader = new TextureLoader("drewno.jpg",this);
         ImageComponent2D image = loader.getImage();
 
         Texture2D murek = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
@@ -179,7 +213,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         
-        com.sun.j3d.utils.geometry.Box noga_1 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_z*0.1f, wyglad_noga_robota);
+        com.sun.j3d.utils.geometry.Box noga_1 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_z*0.1f,  com.sun.j3d.utils.geometry.Box.GENERATE_NORMALS|com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS, wyglad_blat);
         Transform3D p_noga_1 = new Transform3D();
         p_noga_1.set(new Vector3f(blat_x*0.8f, -5f*blat_y, blat_z*0.8f));
         TransformGroup noga_1_tg = new TransformGroup(p_noga_1);
@@ -187,7 +221,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         stolik_tg.addChild(noga_1_tg);
         
         
-        com.sun.j3d.utils.geometry.Box noga_2 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_z*0.1f, wyglad_noga_robota);
+        com.sun.j3d.utils.geometry.Box noga_2 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_z*0.1f,  com.sun.j3d.utils.geometry.Box.GENERATE_NORMALS|com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS, wyglad_blat);
         Transform3D p_noga_2 = new Transform3D();
         p_noga_2.set(new Vector3f(blat_x*0.8f, -5f*blat_y, -blat_z*0.8f));
         TransformGroup noga_2_tg = new TransformGroup(p_noga_2);
@@ -195,7 +229,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         stolik_tg.addChild(noga_2_tg);
         
         
-        com.sun.j3d.utils.geometry.Box noga_3 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_z*0.1f, wyglad_noga_robota);
+        com.sun.j3d.utils.geometry.Box noga_3 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_z*0.1f,  com.sun.j3d.utils.geometry.Box.GENERATE_NORMALS|com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS, wyglad_blat);
         Transform3D p_noga_3 = new Transform3D();
         p_noga_3.set(new Vector3f(-blat_x*0.8f, -5f*blat_y, blat_z*0.8f));
         TransformGroup noga_3_tg = new TransformGroup(p_noga_3);
@@ -203,7 +237,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         stolik_tg.addChild(noga_3_tg);
         
         
-        com.sun.j3d.utils.geometry.Box noga_4 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_z*0.1f, wyglad_noga_robota);
+        com.sun.j3d.utils.geometry.Box noga_4 = new com.sun.j3d.utils.geometry.Box(blat_x*0.1f, 5*blat_y, blat_z*0.1f,  com.sun.j3d.utils.geometry.Box.GENERATE_NORMALS|com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS, wyglad_blat);
         Transform3D p_noga_4 = new Transform3D();
         p_noga_4.set(new Vector3f(-blat_x*0.8f, -5f*blat_y, -blat_z*0.8f));
         TransformGroup noga_4_tg = new TransformGroup(p_noga_4);
@@ -385,11 +419,23 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-     
-        
-        
-        
-        
+      JButton bt = (JButton)e.getSource();
+       if(bt == main_left){ 
+           obrotLewoMain(v_obrotu);      
+       }
+       else if(bt == main_right){
+            obrotPrawoMain(v_obrotu);     
+       }
+       else if(bt == child_right){
+           obrotPrawoSecond(v_obrotu);
+         
+       }
+       else if(bt == child_left){
+           obrotLewoSecond(v_obrotu);  
+       }
+       
+         
+   
     }
 
     @Override
@@ -410,6 +456,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
             case KeyEvent.VK_UP     :     gora(v_pionowe);      break;
             case KeyEvent.VK_SPACE  :     if(spacja&control){obrotRamie1(); spacja = false;};                                  break;
             case KeyEvent.VK_CONTROL  :   if(control&spacja){obrotRamie2(); control = false;};                                  break;
+            
         }
  
       //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -429,6 +476,12 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         }//  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+   
+    
+    
+    
+    
     
     private void obrotRamie1(){
         obracanie_1.setFactor(mnoznik, 0);
@@ -453,7 +506,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     
     
     
-    private void obrotLewoMain(float krok){
+    public void obrotLewoMain(float krok){
       kat1 += krok;    
       p_ramie_1.rotY(kat1);
       //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
@@ -466,11 +519,13 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
       matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotLewoSecond(float krok){
+      if(kat2 < 4.2f)
       kat2 += krok;    
       p_ramie_2.rotY(kat2);
       matka_ramie_2_tg.setTransform(p_ramie_2); 
     }
     private void obrotPrawoSecond(float krok){
+        if(kat2 > -0.87f)
       kat2 -= krok;    
       p_ramie_2.rotY(kat2);
       matka_ramie_2_tg.setTransform(p_ramie_2);
