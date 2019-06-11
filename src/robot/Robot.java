@@ -14,6 +14,7 @@ import com.sun.j3d.utils.behaviors.mouse.*;
 import com.sun.j3d.utils.image.TextureLoader;
 import java.awt.event.ActionEvent;
 import java.awt.event.*;
+import robot.WspolczynnikObrotu;
 
 
 
@@ -39,6 +40,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     TransformGroup ramie_1_walec_2_tg = new TransformGroup();
     TransformGroup pionowy_tg = new TransformGroup();
     TransformGroup stolik_tg = new TransformGroup();
+   
+    WspolczynnikObrotu wsp_obrotu_c = new WspolczynnikObrotu();
             
     Transform3D p_ramie_1 = new Transform3D();
     Transform3D przesuniecie_obserwatora = new Transform3D();       //USTAWIAMY OBSERWATORA W DOMYŚLNEJ POZYCJI
@@ -74,6 +77,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     JButton child_left = new JButton("<<<<<");
     JButton child_right = new JButton(">>>>>");
     
+    javax.swing.JTextField wsp_obrotu = new javax.swing.JTextField("1");
+    JTextArea wsp_obrotu_info = new JTextArea(" Podaj \n współczynnik\n obrotu (1 - 30):");
     
         
         
@@ -93,7 +98,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         //DODANIE PANELU AKCJI-------------------------------------------------------------------------------------        
         JPanel panelOfSettings = new JPanel();
-        panelOfSettings.setLayout(new GridLayout(3, 2,10,10));
+        panelOfSettings.setLayout(new GridLayout(3, 2, 0, 0));
+        panelOfSettings.setBounds(0, 0, 200, 170);
         
         main_left.addActionListener(this);
         main_right.addActionListener(this);
@@ -104,13 +110,23 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         panelOfSettings.add(main_right);
         panelOfSettings.add(child_left);
         panelOfSettings.add(child_right);
+        panelOfSettings.add(wsp_obrotu_info);
+        panelOfSettings.add(wsp_obrotu);
+        
+        wsp_obrotu_info.setEditable(false);
+        wsp_obrotu_info.setBackground(new Color(1, 1, 1, 0));
+        wsp_obrotu_info.setLineWrap(true);
+        wsp_obrotu_info.setAlignmentY(SwingConstants.CENTER);
+        
+        wsp_obrotu.setMaximumSize(new Dimension(2, 2));
+        wsp_obrotu.setPreferredSize(new Dimension(2, 2));
     
         
         
         
         
 
-          add("East", panelOfSettings);
+          add(panelOfSettings);
          //------------------------------------------------------------------------------------------------------
         canvas3D.setPreferredSize(new Dimension(900,700));          //ROZMIAR OKNA
 
@@ -131,7 +147,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         simpleU.addBranchGraph(scena);
         
         canvas3D.addKeyListener(this);
-        add(BorderLayout.CENTER, canvas3D);
       
 
         
@@ -180,7 +195,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         
-        TextureLoader loader = new TextureLoader("drewno.jpg",this);
+        TextureLoader loader = new TextureLoader("obrazki/drewno.jpg",this);
         ImageComponent2D image = loader.getImage();
 
         Texture2D murek = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
@@ -421,17 +436,21 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     public void actionPerformed(ActionEvent e) {
       JButton bt = (JButton)e.getSource();
        if(bt == main_left){ 
-           obrotLewoMain(v_obrotu);      
+           obrotLewoMain(v_obrotu*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()));
+           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));
        }
        else if(bt == main_right){
-            obrotPrawoMain(v_obrotu);     
+            obrotPrawoMain(v_obrotu*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()));
+           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));     
        }
        else if(bt == child_right){
-           obrotPrawoSecond(v_obrotu);
+           obrotPrawoSecond(v_obrotu*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()));
+           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));
          
        }
        else if(bt == child_left){
-           obrotLewoSecond(v_obrotu);  
+           obrotLewoSecond(v_obrotu*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()));
+           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));  
        }
        
          
@@ -448,7 +467,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         switch(e.getKeyCode())                                                                          
         {
-            case KeyEvent.VK_LEFT   :     obrotLewoMain(v_obrotu);      if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;   
+            case KeyEvent.VK_LEFT   :     obrotLewoMain(v_obrotu) ;      if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;   
             case KeyEvent.VK_RIGHT  :     obrotPrawoMain(v_obrotu);     if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
             case KeyEvent.VK_D      :     obrotPrawoSecond(v_obrotu);   if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
             case KeyEvent.VK_A      :     obrotLewoSecond(v_obrotu);    if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
@@ -459,7 +478,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
             
         }
  
-      //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -474,7 +492,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         v_obrotu = 0.005f;
         
-        }//  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     
    
