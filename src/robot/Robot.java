@@ -111,18 +111,22 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         //DODANIE PANELU AKCJI-------------------------------------------------------------------------------------        
         JPanel panelOfSettings = new JPanel();
-        panelOfSettings.setLayout(new GridLayout(3, 2, 0, 0));
-        panelOfSettings.setBounds(0, 0, 200, 170);
+        panelOfSettings.setLayout(new GridLayout(4, 2, 0, 0));
+        panelOfSettings.setBounds(10, 10, 200, 200);
         
         main_left.addActionListener(this);
         main_right.addActionListener(this);
         child_left.addActionListener(this);
         child_right.addActionListener(this);
+        palka_dol.addActionListener(this);
+        palka_gora.addActionListener(this);
         
         panelOfSettings.add(main_left);
         panelOfSettings.add(main_right);
         panelOfSettings.add(child_left);
         panelOfSettings.add(child_right);
+        panelOfSettings.add(palka_gora);
+        panelOfSettings.add(palka_dol);
         panelOfSettings.add(wsp_obrotu_info);
         panelOfSettings.add(wsp_obrotu);
         
@@ -490,6 +494,20 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
            {obrotLewoSecond(0.5f*v_obrotu);
            animuj.Animacja();
            }  
+       }
+       else if(bt == palka_gora){
+           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));
+           for (int i = 0; i <5*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()); i++)
+           {gora(v_pionowe*0.1f);
+           animuj.Animacja();
+           }  
+       }
+       else if(bt == palka_dol){
+           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));
+           for (int i = 0; i <5*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()); i++)
+           {dol(v_pionowe*0.1f);
+           animuj.Animacja();
+           }   
        }
        
          
