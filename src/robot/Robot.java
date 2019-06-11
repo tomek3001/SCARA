@@ -25,8 +25,20 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     
    
     //WSZYSTKIE DEKLARACJE ZMIENNYCH////////////////////////////////////////////////////////////////////////
-
-    TransformGroup wezel_temp = new TransformGroup();   
+    Transform3D zmniejszenie_calosci = new Transform3D();
+    Transform3D p_ramie_1 = new Transform3D();
+    Transform3D przesuniecie_obserwatora = new Transform3D();       //USTAWIAMY OBSERWATORA W DOMYŚLNEJ POZYCJI
+    Transform3D p_noga_robota = new Transform3D();
+    Transform3D p_matka_ramie_2 = new Transform3D();
+    Transform3D p_matka_ramie_2_mysz = new Transform3D();
+    Transform3D p_ramie_2 = new Transform3D();
+    Transform3D p_ramie_2_walec_1 = new Transform3D();
+    Transform3D p_ramie_2_walec_2 = new Transform3D();
+    Transform3D p_ramie_1_walec_1 = new Transform3D();
+    Transform3D p_ramie_1_walec_2 = new Transform3D();
+    Transform3D p_pionowy = new Transform3D();
+    
+    TransformGroup wezel_temp = new TransformGroup(zmniejszenie_calosci);   
     TransformGroup noga_robota_tg = new TransformGroup();
     TransformGroup matka_ramie_1_tg = new TransformGroup();                                //transformgroup obracający się i zawierający ramię
     TransformGroup matka_ramie_1_tg_mysz = new TransformGroup();
@@ -43,17 +55,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
    
     WspolczynnikObrotu wsp_obrotu_c = new WspolczynnikObrotu();
             
-    Transform3D p_ramie_1 = new Transform3D();
-    Transform3D przesuniecie_obserwatora = new Transform3D();       //USTAWIAMY OBSERWATORA W DOMYŚLNEJ POZYCJI
-    Transform3D p_noga_robota = new Transform3D();
-    Transform3D p_matka_ramie_2 = new Transform3D();
-    Transform3D p_matka_ramie_2_mysz = new Transform3D();
-    Transform3D p_ramie_2 = new Transform3D();
-    Transform3D p_ramie_2_walec_1 = new Transform3D();
-    Transform3D p_ramie_2_walec_2 = new Transform3D();
-    Transform3D p_ramie_1_walec_1 = new Transform3D();
-    Transform3D p_ramie_1_walec_2 = new Transform3D();
-    Transform3D p_pionowy = new Transform3D();
     
     float kat1 = 0.0f;      // Kąt początkowy
     float kat2 = 0.0f;      //Dla wszystkich
@@ -79,7 +80,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     
     javax.swing.JTextField wsp_obrotu = new javax.swing.JTextField("1");
     JTextArea wsp_obrotu_info = new JTextArea(" Podaj \n współczynnik\n obrotu (1 - 30):");
-    
         
         
     Robot(){
@@ -120,6 +120,12 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         wsp_obrotu.setMaximumSize(new Dimension(2, 2));
         wsp_obrotu.setPreferredSize(new Dimension(2, 2));
+        
+        wsp_obrotu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                wsp_obrotuMouseClicked(evt);
+            }
+        });
     
         
         
@@ -140,7 +146,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         SimpleUniverse simpleU = new SimpleUniverse(canvas3D);
         simpleU.getViewingPlatform().setNominalViewingTransform();
         
-        przesuniecie_obserwatora.set(new Vector3f(0.0f,1.0f,30.0f));
+        przesuniecie_obserwatora.set(new Vector3f(0.0f,0.1f,3.0f));
 
         simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
 
@@ -418,6 +424,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     
         
         //KOŃEC////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        zmniejszenie_calosci.setScale(0.1);
+        wezel_temp.setTransform(zmniejszenie_calosci);
         wezel_scena.addChild(wezel_temp);
         return wezel_scena;
 
@@ -563,6 +571,11 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
       pionowy_tg.setTransform(p_pionowy); 
       }
     }
+    
+    private void wsp_obrotuMouseClicked(java.awt.event.MouseEvent evt){
+        wsp_obrotu.setText("");
+        
+}
     
     
 }
