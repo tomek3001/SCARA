@@ -80,6 +80,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     
     javax.swing.JTextField wsp_obrotu = new javax.swing.JTextField("1");
     JTextArea wsp_obrotu_info = new JTextArea(" Podaj \n współczynnik\n obrotu (1 - 30):");
+    
+    Animacja animuj = new Animacja();
         
         
     Robot(){
@@ -444,21 +446,33 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     public void actionPerformed(ActionEvent e) {
       JButton bt = (JButton)e.getSource();
        if(bt == main_left){ 
-           obrotLewoMain(v_obrotu*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()));
            wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));
+           for (int i = 0; i <2*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()); i++)
+           {obrotLewoMain(v_obrotu*0.5f);
+           animuj.Animacja();
+           }
        }
        else if(bt == main_right){
-            obrotPrawoMain(v_obrotu*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()));
-           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));     
+           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));
+           for (int i = 0; i <2*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()); i++)
+           {obrotPrawoMain(0.5f*v_obrotu);
+           animuj.Animacja();
+           }     
        }
        else if(bt == child_right){
-           obrotPrawoSecond(v_obrotu*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()));
            wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));
+           for (int i = 0; i <2*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()); i++)
+           {obrotPrawoSecond(0.5f*v_obrotu);
+           animuj.Animacja();
+           }
          
        }
        else if(bt == child_left){
-           obrotLewoSecond(v_obrotu*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()));
-           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));  
+           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));
+           for (int i = 0; i <2*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()); i++)
+           {obrotLewoSecond(0.5f*v_obrotu);
+           animuj.Animacja();
+           }  
        }
        
          
@@ -535,13 +549,11 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     public void obrotLewoMain(float krok){
       kat1 += krok;    
       p_ramie_1.rotY(kat1);
-      //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
       matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotPrawoMain(float krok){
       kat1 -= krok;    
       p_ramie_1.rotY(kat1);
-      //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
       matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotLewoSecond(float krok){
