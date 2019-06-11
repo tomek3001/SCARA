@@ -14,7 +14,9 @@ import com.sun.j3d.utils.behaviors.mouse.*;
 import com.sun.j3d.utils.image.TextureLoader;
 import java.awt.event.ActionEvent;
 import java.awt.event.*;
-import robot.WspolczynnikObrotu;
+import java.util.Timer;
+import java.util.TimerTask;
+import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 
 
 
@@ -25,7 +27,10 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     
    
     //WSZYSTKIE DEKLARACJE ZMIENNYCH////////////////////////////////////////////////////////////////////////
-    Transform3D zmniejszenie_calosci = new Transform3D();
+     private Timer timer = new Timer();
+    
+    
+     
     Transform3D p_ramie_1 = new Transform3D();
     Transform3D przesuniecie_obserwatora = new Transform3D();       //USTAWIAMY OBSERWATORA W DOMYŚLNEJ POZYCJI
     Transform3D p_noga_robota = new Transform3D();
@@ -37,6 +42,10 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     Transform3D p_ramie_1_walec_1 = new Transform3D();
     Transform3D p_ramie_1_walec_2 = new Transform3D();
     Transform3D p_pionowy = new Transform3D();
+    Transform3D temp_transform = new Transform3D();
+    Transform3D temp_transform2 = new Transform3D();
+    Transform3D zmniejszenie_calosci = new Transform3D();
+     
     
     TransformGroup wezel_temp = new TransformGroup(zmniejszenie_calosci);   
     TransformGroup noga_robota_tg = new TransformGroup();
@@ -52,24 +61,25 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     TransformGroup ramie_1_walec_2_tg = new TransformGroup();
     TransformGroup pionowy_tg = new TransformGroup();
     TransformGroup stolik_tg = new TransformGroup();
-   
-    WspolczynnikObrotu wsp_obrotu_c = new WspolczynnikObrotu();
-            
+    TransformGroup blat_tg = new TransformGroup();
+    TransformGroup tg_obiektu = new TransformGroup();
+    
+    
+    WspolczynnikObrotu wsp_obrotu_c = new WspolczynnikObrotu(); 
+    
+    Appearance object_ap = new Appearance();
+    Appearance floor_ap = new Appearance();
     
     float kat1 = 0.0f;      // Kąt początkowy
     float kat2 = 0.0f;      //Dla wszystkich
     float v_obrotu = 0.005f;  //Prędkość obrotu
     float v_pionowe = 0.05f;  //Prędkość elementu ruchomego
-    float w_gore = 0.0f, w_dol = 0.0f;
+    float w_gore = -0.05f, w_dol = 0.0f;
     public float a=0f, b=0.005f;
     
-    MouseRotate obracanie_1 = new MouseRotate();
-    MouseRotate obracanie_cale = new MouseRotate();
-    MouseRotate obracanie_2 = new MouseRotate();
+  
     
-    
-    boolean spacja = true;
-    boolean control = true;
+    boolean hang_object = false;
     float mnoznik = 0.001f;
             
     
@@ -77,6 +87,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     JButton main_right = new JButton(">>>>>");
     JButton child_left = new JButton("<<<<<");
     JButton child_right = new JButton(">>>>>");
+    
     
     javax.swing.JTextField wsp_obrotu = new javax.swing.JTextField("1");
     JTextArea wsp_obrotu_info = new JTextArea(" Podaj \n współczynnik\n obrotu (1 - 30):");
@@ -137,7 +148,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
           add(panelOfSettings);
          //------------------------------------------------------------------------------------------------------
         canvas3D.setPreferredSize(new Dimension(900,700));          //ROZMIAR OKNA
-
+        
         add(canvas3D);
         pack();
         setVisible(true);
@@ -153,8 +164,16 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
 
         simpleU.addBranchGraph(scena);
+        timer.scheduleAtFixedRate(new Movement(), 10, 10);
+        
+        
+        OrbitBehavior orbit = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ROTATE);      // mouse functionality
+        orbit.setSchedulingBounds(new BoundingSphere());
+        simpleU.getViewingPlatform().setViewPlatformBehavior(orbit);
+        
         
         canvas3D.addKeyListener(this);
+        add(BorderLayout.CENTER, canvas3D);
       
 
         
@@ -185,6 +204,34 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
       wezel_scena.addChild(lightD2);
         
         
+      
+      
+      
+              //PODŁOGA
+              
+              
+              
+        TextureLoader loader = new TextureLoader("steel.jpg",this);
+        ImageComponent2D image = loader.getImage();
+
+        Texture2D floor = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
+                                        image.getWidth(), image.getHeight());
+        floor.setImage(0, image);
+        floor.setBoundaryModeS(Texture.WRAP);
+        floor.setBoundaryModeT(Texture.WRAP);
+        floor_ap.setTexture(floor);
+        floor_ap.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
+        
+        com.sun.j3d.utils.geometry.Box podloga = new com.sun.j3d.utils.geometry.Box(20.0f,0.01f,20.0f,com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS,floor_ap);
+        Transform3D p_floor = new Transform3D();
+        p_floor.set(new Vector3f(0.0f,-3.0f,0.0f));
+        
+        TransformGroup tg_floor = new TransformGroup(p_floor);
+        tg_floor.addChild(podloga);
+        wezel_temp.addChild(tg_floor);
+        
+      
+      
         //Podstawa
         Material mat_noga_robota = new Material(new Color3f(0.75f, 0.75f, 0.75f), new Color3f(0.3f, 0.2f, 0.3f), new Color3f(0.5f, 0.5f, 0.5f), new Color3f(0.3f, 0.3f, 0.3f), 128.0f);
         Appearance wyglad_noga_robota = new Appearance();
@@ -203,8 +250,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         
-        TextureLoader loader = new TextureLoader("obrazki/drewno.jpg",this);
-        ImageComponent2D image = loader.getImage();
+         loader = new TextureLoader("drewno.jpg",this);
+         image = loader.getImage();
 
         Texture2D murek = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
                                         image.getWidth(), image.getHeight());
@@ -219,11 +266,10 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         float blat_x, blat_y, blat_z;
-        blat_x = 5.3243243243243243243243243243243f;
+        blat_x = 10.3243243243243243243243243243243f;
         blat_y = 0.3f;
-        blat_z = 3;
-        
-        com.sun.j3d.utils.geometry.Box blat = new com.sun.j3d.utils.geometry.Box(blat_x, blat_y, blat_z, com.sun.j3d.utils.geometry.Box.GENERATE_NORMALS|com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS, wyglad_blat);
+        blat_z = 7;
+           com.sun.j3d.utils.geometry.Box blat = new com.sun.j3d.utils.geometry.Box(blat_x, blat_y, blat_z, com.sun.j3d.utils.geometry.Box.GENERATE_NORMALS|com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS, wyglad_blat);
         
         //blat_x, blat_y, blat_z, wyglad_noga_robota
         
@@ -369,65 +415,36 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         pionowy_tg.setTransform(p_pionowy);
         
         
+     
         
         
+        //OBIEKT DO PODNOSZENIA/////////////////////////////////////////////////////////////////////////////////////////
+        loader = new TextureLoader("crate.png",this);
+        image = loader.getImage();
+
+        Texture2D skrzynia = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
+                                        image.getWidth(), image.getHeight());
+        skrzynia.setImage(0, image);
+        skrzynia.setBoundaryModeS(Texture.WRAP);
+        skrzynia.setBoundaryModeT(Texture.WRAP);
+        object_ap.setTexture(skrzynia);
+        object_ap.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
+                
+        com.sun.j3d.utils.geometry.Box objekt = new com.sun.j3d.utils.geometry.Box(1.0f,1.0f,1.0f,com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS,object_ap);
         
-        //Działanie MYSZY//////////// ////////////////////////////////////////////////////////////////////////////////////
         
-        
+        Transform3D p_obiektu = new Transform3D();
+        p_obiektu.set(new Vector3f(3.0f,1.5f,3.0f));
+        tg_obiektu.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        tg_obiektu.setTransform(p_obiektu);
+        tg_obiektu.addChild(objekt);
+        wezel_temp.addChild(tg_obiektu);
+
         //obracanie pierwszego ramienia
                                            //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
-        matka_ramie_1_tg_mysz.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
-        obracanie_1.setFactor(0, 0);                                                      //mnożnik ruchu 0 - brak obrotu
-        obracanie_1.setTransformGroup(matka_ramie_1_tg_mysz);
-        wezel_temp.addChild(obracanie_1);
-        obracanie_1.setSchedulingBounds(bounds);
         
-        
-        //obracanie drugiego ramienia                                 //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
-        matka_ramie_2_tg_mysz.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);             //obracanie górnego elementu robota
-        obracanie_2.setFactor(0, 0);                                                      //mnożnik ruchu 0 - brak obrotu
-        obracanie_2.setTransformGroup(matka_ramie_2_tg_mysz);
-        wezel_temp.addChild(obracanie_2);
-        obracanie_2.setSchedulingBounds(bounds);
-        
-        
-        //obracanie całego dzieła
-        wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        obracanie_cale.setFactor(mnoznik);                                                //mnożnik ruchu
-        wezel_temp.addChild(obracanie_cale);
-        obracanie_cale.setTransformGroup(wezel_temp);
-        obracanie_cale.setSchedulingBounds(bounds);
-        
-        //Przesuwanie pionowego
-//        MouseTranslate suwanie_pionowe = new MouseTranslate();
-//        pionowy_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-//        suwanie_pionowe.setFactor(0, mnoznik*3);
-//        pionowy_tg.addChild(suwanie_pionowe);
-//        suwanie_pionowe.setTransformGroup(pionowy_tg);
-//        BoundingSphere bounds2 = new BoundingSphere(punkcik, 0.00001);
-//        ramie_2_tg.setBounds(bounds2);
-//        suwanie_pionowe.setSchedulingBounds(bounds2);
-        
-        
-        
-         
-        
-        
-        
-        
-        MouseWheelZoom zoom = new MouseWheelZoom();                                 //PRZYBLIŻANIE I ODDALANIE
-        zoom.setTransformGroup(wezel_temp);
-        zoom.setSchedulingBounds(bounds);
-        wezel_temp.addChild(zoom);
-        
-        //Działanie KLAWIATURY////////////////////////////////////////////////////////////////////////////////////////////////
-
-    
-        
-        //KOŃEC////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        zmniejszenie_calosci.setScale(0.1);
-        wezel_temp.setTransform(zmniejszenie_calosci);
+      //  zmniejszenie_calosci.setScale(0.1);
+      //  wezel_temp.setTransform(zmniejszenie_calosci);                            <<< to cos rozwala !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! znaczy sie nie to, ale przez to nie dziala
         wezel_scena.addChild(wezel_temp);
         return wezel_scena;
 
@@ -441,7 +458,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         bb.addKeyListener(bb);
 
    }
-
+     
     @Override
     public void actionPerformed(ActionEvent e) {
       JButton bt = (JButton)e.getSource();
@@ -478,7 +495,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
          
    
     }
-
     @Override
     public void keyTyped(KeyEvent e) {
       //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -489,17 +505,18 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         switch(e.getKeyCode())                                                                          
         {
-            case KeyEvent.VK_LEFT   :     obrotLewoMain(v_obrotu) ;      if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;   
+            case KeyEvent.VK_LEFT   :     obrotLewoMain(v_obrotu);      if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;   
             case KeyEvent.VK_RIGHT  :     obrotPrawoMain(v_obrotu);     if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
             case KeyEvent.VK_D      :     obrotPrawoSecond(v_obrotu);   if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
             case KeyEvent.VK_A      :     obrotLewoSecond(v_obrotu);    if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
             case KeyEvent.VK_DOWN   :     dol(v_pionowe);       break;
             case KeyEvent.VK_UP     :     gora(v_pionowe);      break;
-            case KeyEvent.VK_SPACE  :     if(spacja&control){obrotRamie1(); spacja = false;};                                  break;
-            case KeyEvent.VK_CONTROL  :   if(control&spacja){obrotRamie2(); control = false;};                                  break;
+            case KeyEvent.VK_SPACE  :     hang_object =! hang_object;        break;
+            case KeyEvent.VK_CONTROL  :          break;
             
         }
  
+      //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -508,52 +525,28 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         switch(e.getKeyCode())                                                                          
         {
-            case KeyEvent.VK_SPACE  :     if(!spacja&control){obrotRamie1_rev(); spacja = true;}; break;
-            case KeyEvent.VK_CONTROL  :   if(!control&spacja){obrotRamie2_rev(); control = true;}; break;
+
         }
         
         v_obrotu = 0.005f;
         
-        }
+        }//  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
    
     
-    
-    
-    
-    
-    private void obrotRamie1(){
-        obracanie_1.setFactor(mnoznik, 0);
-        obracanie_cale.setFactor(0);
-    }
-    
-    private void obrotRamie1_rev(){
-        obracanie_1.setFactor(0);
-        obracanie_cale.setFactor(mnoznik);
-    }
-    
-    
-        private void obrotRamie2(){
-        obracanie_2.setFactor(mnoznik, 0);
-        obracanie_cale.setFactor(0);
-    }
-    
-        private void obrotRamie2_rev(){
-        obracanie_2.setFactor(0);
-        obracanie_cale.setFactor(mnoznik);
-    }
-    
-    
+   
     
     public void obrotLewoMain(float krok){
       kat1 += krok;    
       p_ramie_1.rotY(kat1);
+      //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
       matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotPrawoMain(float krok){
       kat1 -= krok;    
       p_ramie_1.rotY(kat1);
+      //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
       matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotLewoSecond(float krok){
@@ -569,7 +562,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
       matka_ramie_2_tg.setTransform(p_ramie_2);
     }
     private void gora(float krok){   
-      if(w_gore<0.6){
+      if(w_gore<-0.1){
       w_gore = w_gore+krok; 
       p_pionowy.setTranslation(new Vector3f(0.0f, 1.0f+w_gore, 2f));
       pionowy_tg.setTransform(p_pionowy);   
@@ -577,19 +570,51 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     }
       
     private void dol(float krok){
-      if(w_gore>-2.5){
+      if(w_gore>-1.45){
       w_gore = w_gore- krok; 
       p_pionowy.setTranslation(new Vector3f(0.0f, 1.0f+w_gore, 2f));
       pionowy_tg.setTransform(p_pionowy); 
       }
     }
     
-    private void wsp_obrotuMouseClicked(java.awt.event.MouseEvent evt){
+
+    private class Movement extends TimerTask{
+        @Override
+        public void run() {
+            temp_transform.set(new Vector3f(0.0f,0.0f,0.0f));
+            temp_transform2.rotY(kat1);
+            temp_transform2.mul(temp_transform);
+            matka_ramie_1_tg.setTransform(temp_transform2);
+            
+            
+            temp_transform.set(new Vector3f(0.0f,0.0f,0.0f));
+            temp_transform2.rotY(kat2);
+            temp_transform2.mul(temp_transform);
+            matka_ramie_2_tg.setTransform(temp_transform2);
+            
+            
+            temp_transform.set(p_pionowy);
+            temp_transform2.rotY(0.0f);
+            temp_transform2.mul(temp_transform);
+            pionowy_tg.setTransform(temp_transform2);
+            
+            
+            pionowy_tg.getLocalToVworld(temp_transform);
+            Transform3D positionFix = new Transform3D();            
+            positionFix.set(new Vector3f(0.0f,w_gore-1.5f,2.0f));
+            temp_transform.mul(positionFix);
+            
+                    
+           if(hang_object)
+              tg_obiektu.setTransform(temp_transform);
+            
+        }
+    }
+
+       private void wsp_obrotuMouseClicked(java.awt.event.MouseEvent evt){
         wsp_obrotu.setText("");
         
 }
-    
-    
 }
 
 
