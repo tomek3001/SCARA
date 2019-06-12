@@ -19,7 +19,7 @@ import java.util.TimerTask;
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 
 
-
+//test automatycznej synchronizaji
 
 public class Robot extends JFrame implements ActionListener, KeyListener{
     
@@ -88,10 +88,12 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     float mnoznik = 0.001f;
             
     
-    JButton main_left = new JButton("<<<<<");
-    JButton main_right = new JButton(">>>>>");
-    JButton child_left = new JButton("<<<<<");
-    JButton child_right = new JButton(">>>>>");
+    JButton main_left = new JButton("Człon 1 ◄");
+    JButton main_right = new JButton("Człon 1 ►");
+    JButton child_left = new JButton("Człon 2 ◄");
+    JButton child_right = new JButton("Człon 2 ►");
+    JButton palka_gora = new JButton("▲");
+    JButton palka_dol = new JButton("▼");
     
     
     javax.swing.JTextField wsp_obrotu = new javax.swing.JTextField("1");
@@ -116,20 +118,25 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         //DODANIE PANELU AKCJI-------------------------------------------------------------------------------------        
         JPanel panelOfSettings = new JPanel();
-        panelOfSettings.setLayout(new GridLayout(3, 2, 0, 0));
-        panelOfSettings.setBounds(0, 0, 200, 170);
+        panelOfSettings.setLayout(new GridLayout(4, 2, 0, 0));
+        panelOfSettings.setBounds(10, 10, 200, 200);
         
         main_left.addActionListener(this);
         main_right.addActionListener(this);
         child_left.addActionListener(this);
         child_right.addActionListener(this);
+        palka_dol.addActionListener(this);
+        palka_gora.addActionListener(this);
         
         panelOfSettings.add(main_left);
         panelOfSettings.add(main_right);
         panelOfSettings.add(child_left);
         panelOfSettings.add(child_right);
+        panelOfSettings.add(palka_gora);
+        panelOfSettings.add(palka_dol);
         panelOfSettings.add(wsp_obrotu_info);
         panelOfSettings.add(wsp_obrotu);
+        
         wsp_obrotu_info.setEditable(false);
         wsp_obrotu_info.setBackground(new Color(1, 1, 1, 0));
         wsp_obrotu_info.setLineWrap(true);
@@ -168,7 +175,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
 
         simpleU.addBranchGraph(scena);
-        timer.scheduleAtFixedRate(new Movement(), 5, 5);
+        timer.scheduleAtFixedRate(new Movement(), 0 ,1);
         
         
         OrbitBehavior orbit = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ROTATE);      // mouse functionality
@@ -177,7 +184,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         canvas3D.addKeyListener(this);
-        add(BorderLayout.CENTER, canvas3D);
       
 
         
@@ -423,7 +429,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         //OBIEKT DO PODNOSZENIA/////////////////////////////////////////////////////////////////////////////////////////
-        loader = new TextureLoader("obrazki/crate.png",this);
+        loader = new TextureLoader("obrazki/crate.jpg",this);
         image = loader.getImage();
 
         Texture2D skrzynia = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
@@ -495,6 +501,20 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
            animuj.Animacja();
            }  
        }
+       else if(bt == palka_gora){
+           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));
+           for (int i = 0; i <5*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()); i++)
+           {gora(v_pionowe*0.1f);
+           animuj.Animacja();
+           }  
+       }
+       else if(bt == palka_dol){
+           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));
+           for (int i = 0; i <5*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()); i++)
+           {dol(v_pionowe*0.1f);
+           animuj.Animacja();
+           }   
+       }
        
          
    
@@ -550,7 +570,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     private void obrotPrawoMain(float krok){
       kat1 -= krok;    
       p_ramie_1.rotY(kat1);
-      //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
       matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotLewoSecond(float krok){
