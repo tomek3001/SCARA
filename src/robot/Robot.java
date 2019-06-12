@@ -47,7 +47,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     Transform3D zmniejszenie_calosci = new Transform3D();
      
     
-    TransformGroup wezel_temp = new TransformGroup(zmniejszenie_calosci);   
+    TransformGroup wezel_temp = new TransformGroup();   
     TransformGroup noga_robota_tg = new TransformGroup();
     TransformGroup matka_ramie_1_tg = new TransformGroup();                                //transformgroup obracający się i zawierający ramię
     TransformGroup matka_ramie_1_tg_mysz = new TransformGroup();
@@ -78,15 +78,17 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     public float a=0f, b=0.005f;
     
   
-    
+    boolean first_run = true;
     boolean hang_object = false;
     float mnoznik = 0.001f;
             
     
-    JButton main_left = new JButton("<<<<<");
-    JButton main_right = new JButton(">>>>>");
-    JButton child_left = new JButton("<<<<<");
-    JButton child_right = new JButton(">>>>>");
+    JButton main_left = new JButton("Człon 1 ◄");
+    JButton main_right = new JButton("Człon 1 ►");
+    JButton child_left = new JButton("Człon 2 ◄");
+    JButton child_right = new JButton("Człon 2 ►");
+    JButton palka_gora = new JButton("▲");
+    JButton palka_dol = new JButton("▼");
     
     
     javax.swing.JTextField wsp_obrotu = new javax.swing.JTextField("1");
@@ -168,7 +170,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
 
         simpleU.addBranchGraph(scena);
-        timer.scheduleAtFixedRate(new Movement(), 10, 10);
+        timer.scheduleAtFixedRate(new Movement(), 0 ,1);
         
         
         OrbitBehavior orbit = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ROTATE);      // mouse functionality
@@ -177,7 +179,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         canvas3D.addKeyListener(this);
-        add(BorderLayout.CENTER, canvas3D);
       
 
         
@@ -215,7 +216,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
               
               
               
-        TextureLoader loader = new TextureLoader("steel.jpg",this);
+        TextureLoader loader = new TextureLoader("obrazki/steel.jpg",this);
         ImageComponent2D image = loader.getImage();
 
         Texture2D floor = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
@@ -254,7 +255,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         
-         loader = new TextureLoader("drewno.jpg",this);
+         loader = new TextureLoader("obrazki/drewno.jpg",this);
          image = loader.getImage();
 
         Texture2D murek = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
@@ -270,7 +271,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         float blat_x, blat_y, blat_z;
-        blat_x = 10.3243243243243243243243243243243f;
+        blat_x = 10f;
         blat_y = 0.3f;
         blat_z = 7;
            com.sun.j3d.utils.geometry.Box blat = new com.sun.j3d.utils.geometry.Box(blat_x, blat_y, blat_z, com.sun.j3d.utils.geometry.Box.GENERATE_NORMALS|com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS, wyglad_blat);
@@ -423,7 +424,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         //OBIEKT DO PODNOSZENIA/////////////////////////////////////////////////////////////////////////////////////////
-        loader = new TextureLoader("crate.png",this);
+        loader = new TextureLoader("obrazki/crate.jpg",this);
         image = loader.getImage();
 
         Texture2D skrzynia = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
@@ -445,10 +446,11 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         wezel_temp.addChild(tg_obiektu);
 
         //obracanie pierwszego ramienia
-                                           //OBROÓT ZA POMOCĄ MYSZY(OBA PRZCISKI)
         
-      //  zmniejszenie_calosci.setScale(0.1);
-      //  wezel_temp.setTransform(zmniejszenie_calosci);                            <<< to cos rozwala !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! znaczy sie nie to, ale przez to nie dziala
+        
+        zmniejszenie_calosci.setScale(0.5);
+        wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        //wezel_temp.setTransform(zmniejszenie_calosci);                           // <<< to cos rozwala !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! znaczy sie nie to, ale przez to nie dziala
         wezel_scena.addChild(wezel_temp);
         return wezel_scena;
 
@@ -558,13 +560,11 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     public void obrotLewoMain(float krok){
       kat1 += krok;    
       p_ramie_1.rotY(kat1);
-      //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
       matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotPrawoMain(float krok){
       kat1 -= krok;    
       p_ramie_1.rotY(kat1);
-      //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
       matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotLewoSecond(float krok){
@@ -599,23 +599,14 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     private class Movement extends TimerTask{
         @Override
         public void run() {
-            temp_transform.set(new Vector3f(0.0f,0.0f,0.0f));
-            temp_transform2.rotY(kat1);
-            temp_transform2.mul(temp_transform);
-            matka_ramie_1_tg.setTransform(temp_transform2);
-            
-            
-            temp_transform.set(new Vector3f(0.0f,0.0f,0.0f));
-            temp_transform2.rotY(kat2);
-            temp_transform2.mul(temp_transform);
-            matka_ramie_2_tg.setTransform(temp_transform2);
-            
-            
-            temp_transform.set(p_pionowy);
-            temp_transform2.rotY(0.0f);
-            temp_transform2.mul(temp_transform);
-            pionowy_tg.setTransform(temp_transform2);
-            
+            if (first_run)
+            {
+            wezel_temp.setTransform(zmniejszenie_calosci);
+            SceneGraphPath node = new SceneGraphPath
+            tg_obiektu.getLocalToVworld(new SceneGraphPath(wezel_temp.getLocale(), wezel_temp),temp_transform);
+            tg_obiektu.setTransform(temp_transform);
+            first_run = false;
+            }
             
             pionowy_tg.getLocalToVworld(temp_transform);
             Transform3D positionFix = new Transform3D();            
