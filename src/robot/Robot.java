@@ -98,7 +98,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
     Robot(){
-        //OGÓLNIE KOD WZIĘTY Z LABORKI ////////////////////////////////////////////////////////////////////////////////////////////////
+        //OGÓLNIE KOD WZIĘTY Z LABORKI /////////////////////////////////////////////////////////////////////////////////////////////////
           super("SCARA");
           
        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
