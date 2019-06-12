@@ -68,7 +68,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
                                                 //ZMIENNE I PARAMETRY
     
     Vector3f p_obserwatora = new Vector3f(0.0f,0.1f,3.0f);
-    Vector3f temp_vector = new Vector3f();
+    
+    
     
     WspolczynnikObrotu wsp_obrotu_c = new WspolczynnikObrotu(); 
     
@@ -464,7 +465,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         //OBIEKT DO PODNOSZENIA/////////////////////////////////////////////////////////////////////////////////////////
-        loader = new TextureLoader("obrazki/crate.png",this);
+        loader = new TextureLoader("obrazki/crate.jpg",this);
         image = loader.getImage();
 
         Texture2D skrzynia = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
@@ -644,18 +645,16 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
       matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotLewoSecond(float krok){
-      //if(kat2 < 4.2f)
+      if(kat2 < 4.2f)
       kat2 += krok;    
       p_ramie_2.rotY(kat2);
-      matka_ramie_2_tg.setTransform(p_ramie_2);
-      System.out.println(kat2);
+      matka_ramie_2_tg.setTransform(p_ramie_2); 
     }
     private void obrotPrawoSecond(float krok){
-        //if(kat2 > -0.87f)
+        if(kat2 > -0.87f)
       kat2 -= krok;    
       p_ramie_2.rotY(kat2);
       matka_ramie_2_tg.setTransform(p_ramie_2);
-      System.out.println(kat2);
     }
     private void gora(float krok){   
       if(w_gore<-0.01){
@@ -728,12 +727,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
        private void wsp_xMouseClicked(java.awt.event.MouseEvent evt){
         wsp_x.setText("");
         } 
-       
-       private void wsp_yMouseClicked(java.awt.event.MouseEvent evt){
-        wsp_y.setText("");
-        } 
-       
-              
       private boolean Collision(){
           Vector3f tempV1 = new Vector3f();
           Vector3f tempV2 = new Vector3f();
