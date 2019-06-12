@@ -443,13 +443,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         tg_obiektu.setTransform(p_obiektu);
         tg_obiektu.addChild(objekt);
         wezel_temp.addChild(tg_obiektu);
-        
-        //obracanie pierwszego ramienia
-        
-        
-        zmniejszenie_calosci.setScale(0.5);
-        wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        //wezel_temp.setTransform(zmniejszenie_calosci);                           // <<< to cos rozwala !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! znaczy sie nie to, ale przez to nie dziala
+
         wezel_scena.addChild(wezel_temp);
         return wezel_scena;
 
@@ -586,13 +580,23 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     private class Movement extends TimerTask{
         @Override
         public void run() {
-            if (first_run)
-            {
-            wezel_temp.setTransform(zmniejszenie_calosci);
-            tg_obiektu.getLocalToVworld(temp_transform);
-            tg_obiektu.setTransform(temp_transform);
-            first_run = false;
-            }
+            temp_transform.set(new Vector3f(0.0f,0.0f,0.0f));
+            temp_transform2.rotY(kat1);
+            temp_transform2.mul(temp_transform);
+            matka_ramie_1_tg.setTransform(temp_transform2);
+            
+            
+            temp_transform.set(new Vector3f(0.0f,0.0f,0.0f));
+            temp_transform2.rotY(kat2);
+            temp_transform2.mul(temp_transform);
+            matka_ramie_2_tg.setTransform(temp_transform2);
+            
+            
+            temp_transform.set(p_pionowy);
+            temp_transform2.rotY(0.0f);
+            temp_transform2.mul(temp_transform);
+            pionowy_tg.setTransform(temp_transform2);
+            
             
             pionowy_tg.getLocalToVworld(temp_transform);
             Transform3D positionFix = new Transform3D();            
