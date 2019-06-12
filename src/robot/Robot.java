@@ -47,7 +47,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     Transform3D zmniejszenie_calosci = new Transform3D();
      
     
-    TransformGroup wezel_temp = new TransformGroup();   
+    TransformGroup wezel_temp = new TransformGroup(zmniejszenie_calosci);   
     TransformGroup noga_robota_tg = new TransformGroup();
     TransformGroup matka_ramie_1_tg = new TransformGroup();                                //transformgroup obracający się i zawierający ramię
     TransformGroup matka_ramie_1_tg_mysz = new TransformGroup();
@@ -64,6 +64,11 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     TransformGroup blat_tg = new TransformGroup();
     TransformGroup tg_obiektu = new TransformGroup();
     
+                                                //ZMIENNE I PARAMETRY
+    
+    Vector3f p_obserwatora = new Vector3f(0.0f,0.1f,3.0f);
+    
+    
     
     WspolczynnikObrotu wsp_obrotu_c = new WspolczynnikObrotu(); 
     
@@ -73,22 +78,20 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     float kat1 = 0.0f;      // Kąt początkowy
     float kat2 = 0.0f;      //Dla wszystkich
     float v_obrotu = 0.005f;  //Prędkość obrotu
-    float v_pionowe = 0.05f;  //Prędkość elementu ruchomego
-    float w_gore = -0.05f, w_dol = 0.0f;
+    float v_pionowe = 0.005f;  //Prędkość elementu ruchomego
+    float w_gore = -0.005f, w_dol = 0.0f;
     public float a=0f, b=0.005f;
     
   
-    boolean first_run = true;
+    
     boolean hang_object = false;
     float mnoznik = 0.001f;
             
     
-    JButton main_left = new JButton("Człon 1 ◄");
-    JButton main_right = new JButton("Człon 1 ►");
-    JButton child_left = new JButton("Człon 2 ◄");
-    JButton child_right = new JButton("Człon 2 ►");
-    JButton palka_gora = new JButton("▲");
-    JButton palka_dol = new JButton("▼");
+    JButton main_left = new JButton("<<<<<");
+    JButton main_right = new JButton(">>>>>");
+    JButton child_left = new JButton("<<<<<");
+    JButton child_right = new JButton(">>>>>");
     
     
     javax.swing.JTextField wsp_obrotu = new javax.swing.JTextField("1");
@@ -113,25 +116,20 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         //DODANIE PANELU AKCJI-------------------------------------------------------------------------------------        
         JPanel panelOfSettings = new JPanel();
-        panelOfSettings.setLayout(new GridLayout(4, 2, 0, 0));
-        panelOfSettings.setBounds(10, 10, 200, 200);
+        panelOfSettings.setLayout(new GridLayout(3, 2, 0, 0));
+        panelOfSettings.setBounds(0, 0, 200, 170);
         
         main_left.addActionListener(this);
         main_right.addActionListener(this);
         child_left.addActionListener(this);
         child_right.addActionListener(this);
-        palka_dol.addActionListener(this);
-        palka_gora.addActionListener(this);
         
         panelOfSettings.add(main_left);
         panelOfSettings.add(main_right);
         panelOfSettings.add(child_left);
         panelOfSettings.add(child_right);
-        panelOfSettings.add(palka_gora);
-        panelOfSettings.add(palka_dol);
         panelOfSettings.add(wsp_obrotu_info);
         panelOfSettings.add(wsp_obrotu);
-        
         wsp_obrotu_info.setEditable(false);
         wsp_obrotu_info.setBackground(new Color(1, 1, 1, 0));
         wsp_obrotu_info.setLineWrap(true);
@@ -165,12 +163,12 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         SimpleUniverse simpleU = new SimpleUniverse(canvas3D);
         simpleU.getViewingPlatform().setNominalViewingTransform();
         
-        przesuniecie_obserwatora.set(new Vector3f(0.0f,0.1f,3.0f));
+        przesuniecie_obserwatora.set(p_obserwatora);
 
         simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
 
         simpleU.addBranchGraph(scena);
-        timer.scheduleAtFixedRate(new Movement(), 0 ,1);
+        timer.scheduleAtFixedRate(new Movement(), 5, 5);
         
         
         OrbitBehavior orbit = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ROTATE);      // mouse functionality
@@ -179,6 +177,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         canvas3D.addKeyListener(this);
+        add(BorderLayout.CENTER, canvas3D);
       
 
         
@@ -227,9 +226,9 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         floor_ap.setTexture(floor);
         floor_ap.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
         
-        com.sun.j3d.utils.geometry.Box podloga = new com.sun.j3d.utils.geometry.Box(20.0f,0.01f,20.0f,com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS,floor_ap);
+        com.sun.j3d.utils.geometry.Box podloga = new com.sun.j3d.utils.geometry.Box(2.0f,0.001f,2.0f,com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS,floor_ap);
         Transform3D p_floor = new Transform3D();
-        p_floor.set(new Vector3f(0.0f,-3.0f,0.0f));
+        p_floor.set(new Vector3f(0.0f,-0.3f,0.0f));
         
         TransformGroup tg_floor = new TransformGroup(p_floor);
         tg_floor.addChild(podloga);
@@ -243,9 +242,9 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         wyglad_noga_robota.setMaterial(mat_noga_robota);
         
         wezel_temp.addChild(noga_robota_tg);
-        Cylinder noga_robota = new Cylinder(0.8f, 3.9f, 1, 1000, 1000, wyglad_noga_robota);
+        Cylinder noga_robota = new Cylinder(0.1f, 0.39f, 1, 1000, 1000, wyglad_noga_robota);
         noga_robota_tg.addChild(noga_robota);
-        p_noga_robota.set(new Vector3f(0.0f, 2.0f, 0.0f));
+        p_noga_robota.set(new Vector3f(0.0f, 0.2f, 0.0f));
         noga_robota_tg.setTransform(p_noga_robota);
         
         //Stół
@@ -271,9 +270,9 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         float blat_x, blat_y, blat_z;
-        blat_x = 10f;
-        blat_y = 0.3f;
-        blat_z = 7;
+        blat_x = 2.0f;
+        blat_y = 0.03f;
+        blat_z = 0.7f;
            com.sun.j3d.utils.geometry.Box blat = new com.sun.j3d.utils.geometry.Box(blat_x, blat_y, blat_z, com.sun.j3d.utils.geometry.Box.GENERATE_NORMALS|com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS, wyglad_blat);
         
         //blat_x, blat_y, blat_z, wyglad_noga_robota
@@ -334,23 +333,23 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         Appearance wyglad_ramie_2 = new Appearance();     //materiał, wygląd
         wyglad_ramie_2.setMaterial(mat_ramie_2);
         
-        com.sun.j3d.utils.geometry.Box ramie_1 = new com.sun.j3d.utils.geometry.Box(2.0f, 0.3f, 1.0f, wyglad_ramie_1);
-        p_ramie_1.set(new Vector3f(2f, 4.0f, 0.0f));
+        com.sun.j3d.utils.geometry.Box ramie_1 = new com.sun.j3d.utils.geometry.Box(0.2f, 0.03f, 0.1f, wyglad_ramie_1);
+        p_ramie_1.set(new Vector3f(0.2f, 0.4f, 0.0f));
         ramie_1_tg.setTransform(p_ramie_1);
         matka_ramie_1_tg_mysz.addChild(matka_ramie_1_tg);
         matka_ramie_1_tg.addChild(ramie_1_tg);
         ramie_1_tg.addChild(ramie_1);
         
         
-        Cylinder ramie_1_walec_1 = new Cylinder(1.0f, 0.6f, 1, 1000, 1, wyglad_ramie_1);
-        p_ramie_1_walec_1.set(new Vector3f(0f, 2f, 0f));
+        Cylinder ramie_1_walec_1 = new Cylinder(0.1f, 0.06f, 1, 1000, 1, wyglad_ramie_1);
+        p_ramie_1_walec_1.set(new Vector3f(0f, 0.2f, 0f));
         ramie_1_walec_1_tg.setTransform(p_ramie_1_walec_1);
         ramie_1_walec_1_tg.addChild(ramie_1_walec_1);
         noga_robota_tg.addChild(ramie_1_walec_1_tg);
         
         
-        Cylinder ramie_1_walec_2 = new Cylinder(1.0f, 0.6f, 1, 1000, 1, wyglad_ramie_1);
-        p_ramie_1_walec_2.set(new Vector3f(2f, 0f, 0f));
+        Cylinder ramie_1_walec_2 = new Cylinder(0.1f, 0.06f, 1, 1000, 1, wyglad_ramie_1);
+        p_ramie_1_walec_2.set(new Vector3f(0.2f, 0f, 0f));
         ramie_1_walec_2_tg.setTransform(p_ramie_1_walec_2);
         ramie_1_walec_2_tg.addChild(ramie_1_walec_2);
         ramie_1_tg.addChild(ramie_1_walec_2_tg);
@@ -361,7 +360,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
 
         matka_ramie_2_tg_mysz.addChild(matka_ramie_2_tg);
         
-        p_matka_ramie_2_mysz.set(new Vector3f(2f, 0.6f, 0.0f));
+        p_matka_ramie_2_mysz.set(new Vector3f(0.2f, 0.06f, 0.0f));
         matka_ramie_2_tg_mysz.setTransform(p_matka_ramie_2_mysz);
         
         
@@ -372,21 +371,21 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         matka_ramie_2_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         
         
-        com.sun.j3d.utils.geometry.Box ramie_2 = new com.sun.j3d.utils.geometry.Box(1.0f, 0.3f, 2.0f, wyglad_ramie_2);
-        p_ramie_2.set(new Vector3f(0.0f, 0.0f, 2f));
+        com.sun.j3d.utils.geometry.Box ramie_2 = new com.sun.j3d.utils.geometry.Box(0.1f, 0.03f, 0.2f, wyglad_ramie_2);
+        p_ramie_2.set(new Vector3f(0.0f, 0.0f, 0.2f));
         ramie_2_tg.setTransform(p_ramie_2);
         matka_ramie_2_tg.addChild(ramie_2_tg);
         ramie_2_tg.addChild(ramie_2);
         
         
-        p_ramie_2_walec_1.set(new Vector3f(0f, 0f, -2f));
-        Cylinder ramie_2_walec_1 = new Cylinder(1.0f, 0.6f, 1, 1000, 1, wyglad_ramie_2);
+        p_ramie_2_walec_1.set(new Vector3f(0f, 0f, -0.2f));
+        Cylinder ramie_2_walec_1 = new Cylinder(0.1f, 0.06f, 1, 1000, 1, wyglad_ramie_2);
         ramie_2_walec_1_tg.setTransform(p_ramie_2_walec_1);
         ramie_2_tg.addChild(ramie_2_walec_1_tg);
         ramie_2_walec_1_tg.addChild(ramie_2_walec_1);
         
-        Cylinder ramie_2_walec_2 = new Cylinder(1.0f, 0.6f, 1, 1000, 1, wyglad_ramie_2);
-        p_ramie_2_walec_2.set(new Vector3f(0f, 0f, 2f));
+        Cylinder ramie_2_walec_2 = new Cylinder(0.1f, 0.06f, 1, 1000, 1, wyglad_ramie_2);
+        p_ramie_2_walec_2.set(new Vector3f(0f, 0f, 0.2f));
         ramie_2_walec_2_tg.setTransform(p_ramie_2_walec_2);
         ramie_2_walec_2_tg.addChild(ramie_2_walec_2);
         ramie_2_tg.addChild(ramie_2_walec_2_tg);
@@ -394,10 +393,10 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         //Łączenie ramion
-        Cylinder polaczenie_1_2_c = new Cylinder(0.23f, 0.7f, wyglad_noga_robota);
-        Sphere polaczenie_1_2_s = new Sphere(0.23f, 1, 100, wyglad_noga_robota);
+        Cylinder polaczenie_1_2_c = new Cylinder(0.023f, 0.07f, wyglad_noga_robota);
+        Sphere polaczenie_1_2_s = new Sphere(0.023f, 1, 100, wyglad_noga_robota);
         Transform3D p_polaczenie_1_2_s = new Transform3D();
-        p_polaczenie_1_2_s.set(new Vector3f(0.0f, 0.35f, 0.0f));
+        p_polaczenie_1_2_s.set(new Vector3f(0.0f, 0.035f, 0.0f));
         TransformGroup polaczenie_1_2_s_tg = new TransformGroup(p_polaczenie_1_2_s);
         polaczenie_1_2_s_tg.addChild(polaczenie_1_2_s);
         matka_ramie_2_tg.addChild(polaczenie_1_2_s_tg);
@@ -413,10 +412,10 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         pionowy_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         
-        Cylinder pionowy = new Cylinder(0.1f, 4f, 1, 100, 100, wyglad_pionowy);
+        Cylinder pionowy = new Cylinder(0.01f, 0.4f, 1, 100, 100, wyglad_pionowy);
         ramie_2_tg.addChild(pionowy_tg);
         pionowy_tg.addChild(pionowy);
-        p_pionowy.set(new Vector3f(0.0f, 1.0f, (ramie_2.getZdimension()) ));
+        p_pionowy.set(new Vector3f(0.0f, 0.1f, (ramie_2.getZdimension()) ));
         pionowy_tg.setTransform(p_pionowy);
         
         
@@ -424,7 +423,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         //OBIEKT DO PODNOSZENIA/////////////////////////////////////////////////////////////////////////////////////////
-        loader = new TextureLoader("obrazki/crate.jpg",this);
+        loader = new TextureLoader("obrazki/crate.png",this);
         image = loader.getImage();
 
         Texture2D skrzynia = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA,
@@ -435,22 +434,16 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         object_ap.setTexture(skrzynia);
         object_ap.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
                 
-        com.sun.j3d.utils.geometry.Box objekt = new com.sun.j3d.utils.geometry.Box(1.0f,1.0f,1.0f,com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS,object_ap);
+        com.sun.j3d.utils.geometry.Box objekt = new com.sun.j3d.utils.geometry.Box(0.1f,0.1f,0.1f,com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS,object_ap);
         
         
         Transform3D p_obiektu = new Transform3D();
-        p_obiektu.set(new Vector3f(3.0f,1.5f,3.0f));
+        p_obiektu.set(new Vector3f(0.3f,0.15f,0.3f));
         tg_obiektu.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         tg_obiektu.setTransform(p_obiektu);
         tg_obiektu.addChild(objekt);
         wezel_temp.addChild(tg_obiektu);
 
-        //obracanie pierwszego ramienia
-        
-        
-        zmniejszenie_calosci.setScale(0.5);
-        wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        //wezel_temp.setTransform(zmniejszenie_calosci);                           // <<< to cos rozwala !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! znaczy sie nie to, ale przez to nie dziala
         wezel_scena.addChild(wezel_temp);
         return wezel_scena;
 
@@ -497,20 +490,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
            animuj.Animacja();
            }  
        }
-       else if(bt == palka_gora){
-           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));
-           for (int i = 0; i <5*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()); i++)
-           {gora(v_pionowe*0.1f);
-           animuj.Animacja();
-           }  
-       }
-       else if(bt == palka_dol){
-           wsp_obrotu.setText(String.valueOf(wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText())));
-           for (int i = 0; i <5*wsp_obrotu_c.wsp_obrotu(wsp_obrotu.getText()); i++)
-           {dol(v_pionowe*0.1f);
-           animuj.Animacja();
-           }   
-       }
        
          
    
@@ -550,7 +529,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         v_obrotu = 0.005f;
         
-        }//  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     
    
@@ -560,11 +539,13 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     public void obrotLewoMain(float krok){
       kat1 += krok;    
       p_ramie_1.rotY(kat1);
+      //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
       matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotPrawoMain(float krok){
       kat1 -= krok;    
       p_ramie_1.rotY(kat1);
+      //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
       matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotLewoSecond(float krok){
@@ -580,17 +561,17 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
       matka_ramie_2_tg.setTransform(p_ramie_2);
     }
     private void gora(float krok){   
-      if(w_gore<-0.1){
+      if(w_gore<-0.01){
       w_gore = w_gore+krok; 
-      p_pionowy.setTranslation(new Vector3f(0.0f, 1.0f+w_gore, 2f));
+      p_pionowy.setTranslation(new Vector3f(0.0f, 0.1f+w_gore, 0.2f));
       pionowy_tg.setTransform(p_pionowy);   
       }
     }
       
     private void dol(float krok){
-      if(w_gore>-1.45){
+      if(w_gore>-0.145){
       w_gore = w_gore- krok; 
-      p_pionowy.setTranslation(new Vector3f(0.0f, 1.0f+w_gore, 2f));
+      p_pionowy.setTranslation(new Vector3f(0.0f, 0.1f+w_gore, 0.2f));
       pionowy_tg.setTransform(p_pionowy); 
       }
     }
@@ -599,18 +580,27 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     private class Movement extends TimerTask{
         @Override
         public void run() {
-            if (first_run)
-            {
-            wezel_temp.setTransform(zmniejszenie_calosci);
-            SceneGraphPath node = new SceneGraphPath
-            tg_obiektu.getLocalToVworld(new SceneGraphPath(wezel_temp.getLocale(), wezel_temp),temp_transform);
-            tg_obiektu.setTransform(temp_transform);
-            first_run = false;
-            }
+            temp_transform.set(new Vector3f(0.0f,0.0f,0.0f));
+            temp_transform2.rotY(kat1);
+            temp_transform2.mul(temp_transform);
+            matka_ramie_1_tg.setTransform(temp_transform2);
+            
+            
+            temp_transform.set(new Vector3f(0.0f,0.0f,0.0f));
+            temp_transform2.rotY(kat2);
+            temp_transform2.mul(temp_transform);
+            matka_ramie_2_tg.setTransform(temp_transform2);
+            
+            
+            temp_transform.set(p_pionowy);
+            temp_transform2.rotY(0.0f);
+            temp_transform2.mul(temp_transform);
+            pionowy_tg.setTransform(temp_transform2);
+            
             
             pionowy_tg.getLocalToVworld(temp_transform);
             Transform3D positionFix = new Transform3D();            
-            positionFix.set(new Vector3f(0.0f,w_gore-1.5f,2.0f));
+            positionFix.set(new Vector3f(0.0f,w_gore-0.18f,0.2f));
             temp_transform.mul(positionFix);
             
                     
