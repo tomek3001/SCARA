@@ -418,6 +418,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         pionowy_tg.addChild(pionowy);
         p_pionowy.set(new Vector3f(0.0f, 1.0f, (ramie_2.getZdimension()) ));
         pionowy_tg.setTransform(p_pionowy);
+        pionowy_tg.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
         
         
      
@@ -440,16 +441,14 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         Transform3D p_obiektu = new Transform3D();
         p_obiektu.set(new Vector3f(3.0f,1.5f,3.0f));
-        tg_obiektu.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         tg_obiektu.setTransform(p_obiektu);
         tg_obiektu.addChild(objekt);
-        wezel_temp.addChild(tg_obiektu);
-
+        //wezel_temp.addChild(tg_obiektu);
+        
         //obracanie pierwszego ramienia
         
         
         zmniejszenie_calosci.setScale(0.5);
-        wezel_temp.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         //wezel_temp.setTransform(zmniejszenie_calosci);                           // <<< to cos rozwala !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! znaczy sie nie to, ale przez to nie dziala
         wezel_scena.addChild(wezel_temp);
         return wezel_scena;
@@ -531,7 +530,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
             case KeyEvent.VK_A      :     obrotLewoSecond(v_obrotu);    if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
             case KeyEvent.VK_DOWN   :     dol(v_pionowe);       break;
             case KeyEvent.VK_UP     :     gora(v_pionowe);      break;
-            case KeyEvent.VK_SPACE  :     hang_object =! hang_object;        break;
+            case KeyEvent.VK_SPACE  :     {wezel_temp.addChild(tg_obiektu);};        break;
             case KeyEvent.VK_CONTROL  :          break;
             
         }
@@ -602,8 +601,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
             if (first_run)
             {
             wezel_temp.setTransform(zmniejszenie_calosci);
-            SceneGraphPath node = new SceneGraphPath
-            tg_obiektu.getLocalToVworld(new SceneGraphPath(wezel_temp.getLocale(), wezel_temp),temp_transform);
+            tg_obiektu.getLocalToVworld(temp_transform);
             tg_obiektu.setTransform(temp_transform);
             first_run = false;
             }
