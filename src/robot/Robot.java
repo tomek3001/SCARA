@@ -535,7 +535,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
             case KeyEvent.VK_A      :     obrotLewoSecond(v_obrotu);    if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
             case KeyEvent.VK_DOWN   :     dol(v_pionowe);       break;
             case KeyEvent.VK_UP     :     gora(v_pionowe);      break;
-            case KeyEvent.VK_SPACE  :     {wezel_temp.addChild(tg_obiektu);};        break;
+            case KeyEvent.VK_SPACE  :     hang_object =! hang_object;        break;
             case KeyEvent.VK_CONTROL  :          break;
             
         }
