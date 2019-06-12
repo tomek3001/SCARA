@@ -80,8 +80,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     float v_obrotu = 0.005f;  //Prędkość obrotu
     float v_pionowe = 0.005f;  //Prędkość elementu ruchomego
     float w_gore = -0.005f, w_dol = 0.0f;
-    public float a=0f, b=0.005f;
-    
+    float a=0f, b=0.005f;
+    float object_size = 0.1f;
   
     
     boolean hang_object = false;
@@ -434,7 +434,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         object_ap.setTexture(skrzynia);
         object_ap.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
                 
-        com.sun.j3d.utils.geometry.Box objekt = new com.sun.j3d.utils.geometry.Box(0.1f,0.1f,0.1f,com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS,object_ap);
+        com.sun.j3d.utils.geometry.Box objekt = new com.sun.j3d.utils.geometry.Box(object_size,object_size,object_size,com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS,object_ap);
         
         
         Transform3D p_obiektu = new Transform3D();
@@ -444,6 +444,11 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         tg_obiektu.addChild(objekt);
         wezel_temp.addChild(tg_obiektu);
 
+        
+        
+        
+        
+        
         wezel_scena.addChild(wezel_temp);
         return wezel_scena;
 
@@ -539,7 +544,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     public void obrotLewoMain(float krok){
       kat1 += krok;    
       p_ramie_1.rotY(kat1);
-      //p_ramie_1.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
+              
       matka_ramie_1_tg.setTransform(p_ramie_1); 
     }
     private void obrotPrawoMain(float krok){
@@ -570,10 +575,13 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
       
     private void dol(float krok){
       if(w_gore>-0.145){
-      w_gore = w_gore- krok; 
-      p_pionowy.setTranslation(new Vector3f(0.0f, 0.1f+w_gore, 0.2f));
-      pionowy_tg.setTransform(p_pionowy); 
+        if(!Collision()){
+            w_gore = w_gore- krok; 
+            p_pionowy.setTranslation(new Vector3f(0.0f, 0.1f+w_gore, 0.2f));
+            pionowy_tg.setTransform(p_pionowy); 
+        }
       }
+      
     }
     
 
@@ -612,8 +620,34 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
 
        private void wsp_obrotuMouseClicked(java.awt.event.MouseEvent evt){
         wsp_obrotu.setText("");
-        
-}
+        } 
+      private boolean Collision(){
+          Vector3f tempV1 = new Vector3f();
+          Vector3f tempV2 = new Vector3f();
+          Transform3D temp1 = new Transform3D();
+          Transform3D temp2 = new Transform3D();
+          Vector3f tempV3 = new Vector3f();
+          Transform3D temp3 = new Transform3D();
+          
+          tg_obiektu.getTransform(temp1);
+          temp1.get(tempV1);
+          System.out.println("OBIEKT:: "+tempV1.x);
+          
+          pionowy_tg.getTransform(temp2);
+          temp2.get(tempV2);
+          System.out.println("SUWAK::  "+(tempV2.x));
+          
+          
+          
+          
+          if((tempV2.y+0.155f)<tempV1.y)
+              return true;
+          else
+              return false;
+          
+          
+          
+      }
 }
 
 
