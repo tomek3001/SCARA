@@ -34,6 +34,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     
     
      
+     
+     
     Transform3D p_ramie_1 = new Transform3D();
     Transform3D przesuniecie_obserwatora = new Transform3D();       //USTAWIAMY OBSERWATORA W DOMYŚLNEJ POZYCJI
     Transform3D p_noga_robota = new Transform3D();
@@ -68,6 +70,9 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     TransformGroup blat_tg = new TransformGroup();
     TransformGroup tg_obiektu = new TransformGroup();
     
+    
+    CollisionDetector myColDet = new CollisionDetector();
+    
     Stack<Integer> nagrywanie = new Stack<>();
     Stack<Integer> nagrywanie_temp = new Stack<>();
                                                 //ZMIENNE I PARAMETRY
@@ -81,8 +86,12 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     float kat1_temp;
     float kat2_temp;
     float pion;
+    
     Appearance object_ap = new Appearance();
     Appearance floor_ap = new Appearance();
+    
+    
+    String last_move;
     
     float kat1 = 0.0f;      // Kąt początkowy
     float kat2 = 0.0f;      //Dla wszystkich
@@ -96,6 +105,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     public boolean record = false;
     public boolean collision = false;
     public boolean koniec_ruchu = false;
+    public boolean isColliding = false;
     boolean hang_object = false;
     float mnoznik = 0.001f;
     JCheckBox czy_nagrywamy = new JCheckBox("Nagrywanie");
@@ -142,8 +152,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         //DODANIE PANELU AKCJI-------------------------------------------------------------------------------------        
         JPanel panelOfSettings = new JPanel();
-        panelOfSettings.setLayout(new GridLayout(8, 2, 0, 0));
-        panelOfSettings.setBounds(10, 10, 200, 400);
+        panelOfSettings.setLayout(new GridLayout(9, 2, 0, 0));
+        panelOfSettings.setBounds(10, 10, 200, 450);
         
         main_left.addActionListener(this);
         main_right.addActionListener(this);
@@ -183,6 +193,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         panelOfSettings.add(obrot);
         panelOfSettings.add(cofanie);
         panelOfSettings.add(czy_nagrywamy);
+        
         
         wsp_obrotu_info.setEditable(false);
         wsp_obrotu_info.setBackground(new Color(1, 1, 1, 0));
@@ -533,7 +544,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
                                                                 - object_size
                                                                 ), 
                                                     new Point3d(+ object_size, 
-                                                                + object_size, 
+                                                                + object_size+0.001, 
                                                                 + object_size
                                                                 )
                                                     );
@@ -551,9 +562,12 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         tg_obiektu.addChild(objekt);
         wezel_temp.addChild(tg_obiektu);
         
-        CollisionDetector myColDet = new CollisionDetector(objekt, objekt_bounds);
+        //myColDet.getTheBounds(objekt_bounds);
+        myColDet.getTheShape(objekt);
         myColDet.setSchedulingBounds(bounds);
+        
         wezel_scena.addChild(myColDet);
+
 
      ////////////////////////////////////////////////////////////////////////////////
         
@@ -632,7 +646,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
            }   
        }
        else if(bt == obrot){
-//           
+            if(myColDet.isColliding()){System.out.println("Nie można ruszyć - KOLIZOZZZAAAAAAAAA!!!");}
+            else{
             //odwrotna kinematyka
             if(Math.sqrt( Math.pow( Double.parseDouble(wsp_x.getText()) , 2 ) + Math.pow( Double.parseDouble(wsp_z.getText()),2 ) ) <= 0.8){
             kat2_temp = (float)(Math.asin(1)-Math.acos( ( Math.pow( Double.parseDouble(wsp_x.getText()) , 2 ) + Math.pow( Double.parseDouble(wsp_z.getText()) , 2 ) - 0.32 ) / ( 2 * 0.4 * 0.4 ) ));
@@ -649,8 +664,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
             
            System.out.println("\nAktualna wartość kąta 1: " + kat1 + "\nPożądana wartość kąta 1: " + kat1_temp );
            System.out.println("\nAktualna wartość kąta 2: " + kat2 + "\nPożądana wartość kąta 2: " + kat2_temp );
-           for(int i=0; i<3000; i++)
-           animuj.Animacja();
+
                                 
             
             
@@ -778,7 +792,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
                     {                    
                         System.out.println("Wykonanie pętli 1" + "\nAktualna wartość kąta 2: " + kat2 + "\nPożądana wartość kąta 2: " + kat2_temp );
                         obrotLewoSecond(0.05f*v_obrotu);
-                        animuj.Animacja();
+                        animuj.Animacja(1);
     }
                 else if(kat2>kat2_temp)
                     
@@ -786,7 +800,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
                     {                    
                         System.out.println("Wykonanie pętli 2" + "\nAktualna wartość kąta 2: " + kat2 + "\nPożądana wartość kąta 2: " + kat2_temp );
                         obrotPrawoSecond(0.05f*v_obrotu);
-                        animuj.Animacja();
+                        animuj.Animacja(1);
        }
                 if(koniec_ruchu)
                     koniec_ruchu=!koniec_ruchu;
@@ -807,7 +821,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
                     {                    
                         System.out.println("Wykonanie pętli 4" + "\nAktualna wartość kąta 2: " + kat2 + "\nPożądana wartość kąta 2: " + kat2_temp );
                         obrotPrawoSecond(0.05f*v_obrotu);
-                        animuj.Animacja();
+                        animuj.Animacja(1);
                     }
             }    
             }
@@ -815,7 +829,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
 
     }
          
-   
+       }
     }
     @Override
     public void keyTyped(KeyEvent e) {
@@ -827,10 +841,10 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         switch(e.getKeyCode())                                                                          
         {
-            case KeyEvent.VK_LEFT   :     obrotLewoMain(v_obrotu);      if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;   
-            case KeyEvent.VK_RIGHT  :     obrotPrawoMain(v_obrotu);     if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
-            case KeyEvent.VK_D      :     obrotPrawoSecond(v_obrotu);   if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
-            case KeyEvent.VK_A      :     obrotLewoSecond(v_obrotu);    if(v_obrotu < 0.14f)v_obrotu = v_obrotu*1.1f;   break;
+            case KeyEvent.VK_LEFT   :     v_obrotu = 0.005f;  obrotLewoMain(v_obrotu);      break;   
+            case KeyEvent.VK_RIGHT  :     v_obrotu = 0.005f;  obrotPrawoMain(v_obrotu);     break;
+            case KeyEvent.VK_D      :     v_obrotu = 0.005f;  obrotPrawoSecond(v_obrotu);   break;
+            case KeyEvent.VK_A      :     v_obrotu = 0.005f;  obrotLewoSecond(v_obrotu);    break;
             case KeyEvent.VK_DOWN   :     dol(v_pionowe);       break;
             case KeyEvent.VK_UP     :     gora(v_pionowe);      break;
             case KeyEvent.VK_SPACE  :     hang_object =! hang_object;        break;
@@ -849,7 +863,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
 
         }
         
-        //v_obrotu = 0.005f;
+        v_obrotu = 0.07f;
         
         }
     }
@@ -900,52 +914,77 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
          }
          
     }
-   
+  
     
     public void obrotLewoMain(float krok){
+       if((myColDet.inCollision && last_move.equals("ramie_1_prawo")) || !myColDet.isColliding()){
+      if(myColDet.isColliding())
+      kat1 += krok;    
       kat1 += krok;    
       p_ramie_1.rotY(kat1);              
               
       matka_ramie_1_tg.setTransform(p_ramie_1); 
-    }
+      last_move = "ramie_1_lewo";
+       }
+
+      }
     private void obrotPrawoMain(float krok){
-       if(!collision)
+       if((myColDet.inCollision && last_move.equals("ramie_1_lewo")) || !myColDet.isColliding()){
+      if(myColDet.isColliding())
       kat1 -= krok;    
+      kat1 -= krok;      
       p_ramie_1.rotY(kat1);
-      matka_ramie_1_tg.setTransform(p_ramie_1); 
+      matka_ramie_1_tg.setTransform(p_ramie_1);
+      last_move = "ramie_1_prawo";
+      animuj.Animacja(1);
+       }
 
     }
     private void obrotLewoSecond(float krok){
+       if((myColDet.inCollision && last_move.equals("ramie_2_prawo")) || !myColDet.isColliding()){
       if( !((kat2+krok) < -Math.PI/2 + 0.52372 && (kat2+krok) > -Math.PI/2 - 0.52372) &&!collision)
-      {kat2 += krok;    
+      {if(myColDet.isColliding())
+      kat2 += krok;    
+      kat2 += krok;    
       p_ramie_2.rotY(kat2);
       matka_ramie_2_tg.setTransform(p_ramie_2);}
       else if(!nagrywanie.isEmpty())
           nagrywanie.pop();
-     // System.out.println("obrotLewoSecond kat2: " + kat2);
+      
+      last_move = "ramie_2_lewo";
+      animuj.Animacja(1);
+     }
     }
     private void obrotPrawoSecond(float krok){
+       if((myColDet.inCollision && last_move.equals("ramie_2_lewo")) || !myColDet.isColliding()){
       float temp = kat2;
       if(!((kat2-krok) < -Math.PI/2 + 0.52372 && (kat2-krok) > -Math.PI/2 - 0.52372) &&!collision)
-      {kat2 -= krok;    
+      {if(myColDet.isColliding())
+      kat2 -= krok;    
+      kat2 -= krok;    
       p_ramie_2.rotY(kat2);
       matka_ramie_2_tg.setTransform(p_ramie_2);}
       else if(!nagrywanie.isEmpty())
           nagrywanie.pop();
       if(temp==kat2)
           koniec_ruchu=true;
+      last_move = "ramie_2_prawo";
+      animuj.Animacja(1);
+       }
     }
-    private void gora(float krok){   
+    private void gora(float krok){
+        if((myColDet.inCollision && last_move.equals("pionowy_dol")) || !myColDet.isColliding()){
       if(w_gore<-0.01){
       w_gore = w_gore+krok; 
       p_pionowy.setTranslation(new Vector3f(0.0f, 0.1f+w_gore, 0.2f));
       pionowy_tg.setTransform(p_pionowy);   
       }
       else if(!nagrywanie.isEmpty())nagrywanie.pop();
+        }
     }
       
     private void dol(float krok){
-      if(w_gore>-0.145){
+      if(w_gore>-0.145 && !myColDet.inCollision){
         if(!collision){
             w_gore = w_gore- krok; 
             p_pionowy.setTranslation(new Vector3f(0.0f, 0.1f+w_gore, 0.2f));
@@ -954,6 +993,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
       else if(!nagrywanie.isEmpty())
           nagrywanie.pop();
     }
+      last_move = "pionowy_dol";
     
     }
 
@@ -984,6 +1024,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
             positionFix.set(new Vector3f(0.0f,w_gore-0.18f,0.2f));
             temp_transform.mul(positionFix);
             
+            isColliding = myColDet.isColliding();
+            //System.out.println(isColliding);
                     
            if(hang_object)
               tg_obiektu.setTransform(temp_transform);
@@ -1061,12 +1103,30 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
    * @param theBounds
    *            Bounds that define the active region for this behaviour
    */
+  
+  
+com.sun.j3d.utils.geometry.Box theShape;
+BoundingBox theBounds;  
+  
   public CollisionDetector(com.sun.j3d.utils.geometry.Box theShape, BoundingBox theBounds) {
       inCollision = false;
-    collidingBox = theShape;
+      collidingBox = theShape;
       collidingBox.setCollisionBounds(theBounds);
+  }  
+  
+   public void getTheShape(com.sun.j3d.utils.geometry.Box theShape){
+      collidingBox = theShape;
+ } 
+ 
+ public void getTheBounds(BoundingBox theBounds){
+      collidingBox.setCollisionBounds(theBounds);
+ }
+  public CollisionDetector() {
+      inCollision = false;
   }
  
+
+         
   /**
    * This creates an entry, exit and movement collision criteria. These are
    * then OR'ed together, and the wake up condition set to the result.
@@ -1092,15 +1152,19 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     inCollision = !inCollision;
 
     if (inCollision) {
-        System.out.println("Weszlo");
+        //System.out.println("Weszlo");
         wakeupOn(wExit);  
       }
     else {
-        System.out.println("Wyszlo");
+        //System.out.println("Wyszlo");
         wakeupOn(wEnter); 
     }
     
-  }      
+  }
+  
+  private boolean isColliding() {
+     return inCollision;
+ }
 
 
  }
