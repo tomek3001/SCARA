@@ -10,10 +10,10 @@ package robot;
  * @author szyma
  */
 public class Animacja {
-     public void Animacja(){
+     public void Animacja(int i){
     try{
         
-        Thread.sleep(1);
+        Thread.sleep(i);
     
         }
     catch (Exception e){}
