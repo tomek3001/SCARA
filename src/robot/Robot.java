@@ -53,9 +53,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     Transform3D zmniejszenie_calosci = new Transform3D();
      
     
-    Cylinder pionowy;
-    
-    
     TransformGroup wezel_temp = new TransformGroup(zmniejszenie_calosci);   
     TransformGroup noga_robota_tg = new TransformGroup();
     TransformGroup matka_ramie_1_tg = new TransformGroup();                                //transformgroup obracający się i zawierający ramię
@@ -92,13 +89,14 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     
     Appearance object_ap = new Appearance();
     Appearance floor_ap = new Appearance();
+    Appearance wyglad_pionowy = new Appearance();
     
     
     String last_move;
     
     float kat1 = 0.0f;      // Kąt początkowy
     float kat2 = 0.0f;      //Dla wszystkich
-    float v_obrotu = 0.14f;  //Prędkość obrotu
+    float v_obrotu = 0.07f;  //Prędkość obrotu
     float v_pionowe = 0.005f;  //Prędkość elementu ruchomego
     float w_gore = -0.005f, w_dol = 0.0f;
     float a=0f, b=0.005f;
@@ -113,6 +111,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     float mnoznik = 0.001f;
     JCheckBox czy_nagrywamy = new JCheckBox("Nagrywanie");
     
+    com.sun.j3d.utils.geometry.Box objekt = new com.sun.j3d.utils.geometry.Box(object_size,object_size,object_size,com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS|com.sun.j3d.utils.geometry.Box.GENERATE_NORMALS_INWARD,object_ap);
+    Cylinder pionowy = new Cylinder(0.01f, 0.4f, 1, 100, 100, wyglad_pionowy);
     
     JButton main_left = new JButton("Człon 1 ◄");
     JButton main_right = new JButton("Człon 1 ►");
@@ -464,8 +464,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         
         ramie_1_tg.addChild(matka_ramie_2_tg_mysz);
-        //p_matka_ramie_2.set(new Vector3f(2f, 0.6f, 0.0f));
-        //matka_ramie_2_tg.setTransform(p_matka_ramie_2);
         
         matka_ramie_2_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         
@@ -475,23 +473,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         ramie_2_tg.setTransform(p_ramie_2);
         matka_ramie_2_tg.addChild(ramie_2_tg);
         ramie_2_tg.addChild(ramie_2);
-        
-              //Pionowy suwak
-        
-        
-        Appearance wyglad_pionowy = new Appearance();
-        wyglad_pionowy.setMaterial(mat_ramie_1);
-        
-        
-        pionowy_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        pionowy_tg.setCapability(TransformGroup.ALLOW_COLLIDABLE_WRITE);
-        
-        pionowy = new Cylinder(0.01f, 0.4f, 1, 100, 100, wyglad_pionowy);
-        pionowy.setCapability(TransformGroup.ALLOW_COLLIDABLE_WRITE);
-        ramie_2_tg.addChild(pionowy_tg);
-        pionowy_tg.addChild(pionowy);
-        p_pionowy.set(new Vector3f(0.0f, 0.1f, (ramie_2.getZdimension()) ));
-        pionowy_tg.setTransform(p_pionowy);
         
         
         p_ramie_2_walec_1.set(new Vector3f(0f, 0f, -0.2f));
@@ -518,7 +499,25 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         matka_ramie_2_tg.addChild(polaczenie_1_2_s_tg);
         matka_ramie_2_tg.addChild(polaczenie_1_2_c);
         
-                
+        
+        //Pionowy suwak
+        
+        
+        wyglad_pionowy.setMaterial(mat_ramie_1);
+        
+        
+        pionowy_tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        
+        Cylinder pionowy = new Cylinder(0.01f, 0.4f, 1, 100, 100, wyglad_pionowy);
+        ramie_2_tg.addChild(pionowy_tg);
+        pionowy_tg.addChild(pionowy);
+        p_pionowy.set(new Vector3f(0.0f, 0.1f, (ramie_2.getZdimension()) ));
+        pionowy_tg.setTransform(p_pionowy);
+        pionowy.setCapability(Cylinder.ALLOW_COLLIDABLE_WRITE);
+        
+     
+        
+        
         //OBIEKT DO PODNOSZENIA/////////////////////////////////////////////////////////////////////////////////////////
         loader = new TextureLoader("obrazki/crate.png",this);
         image = loader.getImage();
@@ -531,7 +530,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         object_ap.setTexture(skrzynia);
         object_ap.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
                 
-        com.sun.j3d.utils.geometry.Box objekt = new com.sun.j3d.utils.geometry.Box(object_size,object_size,object_size,com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS|com.sun.j3d.utils.geometry.Box.GENERATE_NORMALS_INWARD,object_ap);
+        
         //System.out.println(objekt.getBounds());
         
         Transform3D objekt_bounds_trans = new Transform3D();
@@ -846,26 +845,14 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
             case KeyEvent.VK_RIGHT  :     v_obrotu = 0.005f;  obrotPrawoMain(v_obrotu);     break;
             case KeyEvent.VK_D      :     v_obrotu = 0.005f;  obrotPrawoSecond(v_obrotu);   break;
             case KeyEvent.VK_A      :     v_obrotu = 0.005f;  obrotLewoSecond(v_obrotu);    break;
-            case KeyEvent.VK_DOWN   :     dol(v_pionowe);    break;
+            case KeyEvent.VK_DOWN   :     dol(v_pionowe);       break;
             case KeyEvent.VK_UP     :     gora(v_pionowe);      break;
-            case KeyEvent.VK_SPACE  :     Pickable();        break;
+            case KeyEvent.VK_SPACE  :     if(myColDet.isColliding() && w_gore < -0.1f && !hang_object){pionowy.setCollidable(false);hang_object =! hang_object;myColDet.resetCollision();};        break;
             
         }
  
       //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    public void Pickable(){
-        if(myColDet.inCollision && w_gore <= -0.1f && !hang_object){            
-            pionowy.setCollidable(false);
-            hang_object =! hang_object;
-            myColDet.resetCollision();
-        }
-        else if(hang_object){
-            hang_object = !hang_object;
-        }
-    }
-    
 
     @Override
     public void keyReleased(KeyEvent e) {
@@ -876,7 +863,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
 
         }
         
-        v_obrotu = 0.14f;
+        v_obrotu = 0.07f;
         
         }
     }
@@ -972,7 +959,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
        if((myColDet.inCollision && last_move.equals("ramie_2_lewo")) || !myColDet.isColliding()){
       float temp = kat2;
       if(!((kat2-krok) < -Math.PI/2 + 0.52372 && (kat2-krok) > -Math.PI/2 - 0.52372) &&!collision)
-      {if(myColDet.isColliding()&& !hang_object)
+      {if(myColDet.isColliding())
       kat2 -= krok;    
       kat2 -= krok;    
       p_ramie_2.rotY(kat2);
@@ -1038,7 +1025,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
             temp_transform.mul(positionFix);
             
             isColliding = myColDet.isColliding();
-           
             //System.out.println(isColliding);
                     
            if(hang_object)
@@ -1055,6 +1041,17 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
            if(raport_temp>5000){
             
             try{
+//            System.out.println("Kąt 1: " + kat1 + "    Kąt 2: " + kat2);
+//            System.out.println("x: " + temp_vector.getX() + "  y: " + temp_vector.getY() + "  z: " + temp_vector.getZ());
+//            System.out.println("x: " + temp_vector.getX() + "  y: " + temp_vector.getY() + "  z: " + temp_vector.getZ());
+//            System.out.println(
+//            "x: " + Double.parseDouble(wsp_x.getText()) +
+//            "\ny: " + Double.parseDouble(wsp_z.getText()) + 
+//            "\nx^2: " + Math.pow( Double.parseDouble(wsp_x.getText()) , 2 ) +
+//            "\ny^2: " + Math.pow( Double.parseDouble(wsp_z.getText()) , 2 ) +
+//            "\npierwiastek z x^2 + y^2: " + Math.sqrt( Math.pow( Double.parseDouble(wsp_x.getText()) , 2 ) + Math.pow( Double.parseDouble(wsp_z.getText()) , 2 ) ) +
+//            "\nacos(x/y)" + Math.acos(Math.sqrt( Math.pow( Double.parseDouble(wsp_x.getText()) , 2 ) + Math.pow( Double.parseDouble(wsp_z.getText()) , 2 ) )/0.8)
+//            );
             raport_temp=0;
             }
             catch(Exception e){}
@@ -1128,9 +1125,7 @@ BoundingBox theBounds;
       inCollision = false;
   }
  
-    public void resetCollision(){
-        inCollision = false;
-    }
+
          
   /**
    * This creates an entry, exit and movement collision criteria. These are
@@ -1145,6 +1140,10 @@ BoundingBox theBounds;
       System.out.println(collidingBox.getCollisionBounds());
 
 
+  }
+  
+  public void resetCollision(){
+    inCollision = false;
   }
  
   /**
