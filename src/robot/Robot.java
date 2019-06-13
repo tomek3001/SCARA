@@ -45,6 +45,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     Transform3D p_pionowy = new Transform3D();
     Transform3D temp_transform = new Transform3D();
     Transform3D temp_transform2 = new Transform3D();
+    Transform3D temp_transform3 = new Transform3D();
     Transform3D zmniejszenie_calosci = new Transform3D();
      
     
@@ -70,9 +71,13 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
                                                 //ZMIENNE I PARAMETRY
     
     Vector3f p_obserwatora = new Vector3f(0.0f,0.1f,3.0f);
-     BoundingSphere bounds = new BoundingSphere(new Point3d(0,0,0),50);
+    Vector3f temp_vector = new Vector3f();
     
     WspolczynnikObrotu wsp_obrotu_c = new WspolczynnikObrotu(); 
+    int raport_temp = 1000;
+    
+    float kat1_temp;
+    float kat2_temp;
     
     Appearance object_ap = new Appearance();
     Appearance floor_ap = new Appearance();
@@ -96,10 +101,16 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
     JButton child_right = new JButton("Człon 2 ►");
     JButton palka_gora = new JButton("▲");
     JButton palka_dol = new JButton("▼");
-    
+    JButton obrot = new JButton("OBRÓĆ");
     
     javax.swing.JTextField wsp_obrotu = new javax.swing.JTextField("1");
+    javax.swing.JTextField wsp_x = new javax.swing.JTextField("0.4");
+    javax.swing.JTextField wsp_y = new javax.swing.JTextField("-0.4");
+    
     JTextArea wsp_obrotu_info = new JTextArea(" Podaj \n współczynnik\n obrotu (1 - 30):");
+    JTextArea wsp_x_info = new JTextArea(" Podaj \n współrzędną\n x:");
+    JTextArea wsp_y_info = new JTextArea(" Podaj \n współrzędną\n y:");
+    
     
     Animacja animuj = new Animacja();
         
@@ -120,8 +131,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         
         //DODANIE PANELU AKCJI-------------------------------------------------------------------------------------        
         JPanel panelOfSettings = new JPanel();
-        panelOfSettings.setLayout(new GridLayout(4, 2, 0, 0));
-        panelOfSettings.setBounds(10, 10, 200, 200);
+        panelOfSettings.setLayout(new GridLayout(7, 2, 0, 0));
+        panelOfSettings.setBounds(10, 10, 200, 400);
         
         main_left.addActionListener(this);
         main_right.addActionListener(this);
@@ -129,6 +140,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         child_right.addActionListener(this);
         palka_dol.addActionListener(this);
         palka_gora.addActionListener(this);
+        obrot.addActionListener(this);
         
         panelOfSettings.add(main_left);
         panelOfSettings.add(main_right);
@@ -138,11 +150,26 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         panelOfSettings.add(palka_dol);
         panelOfSettings.add(wsp_obrotu_info);
         panelOfSettings.add(wsp_obrotu);
+        panelOfSettings.add(wsp_x_info);
+        panelOfSettings.add(wsp_x);
+        panelOfSettings.add(wsp_y_info);
+        panelOfSettings.add(wsp_y);
+        panelOfSettings.add(obrot);
         
         wsp_obrotu_info.setEditable(false);
         wsp_obrotu_info.setBackground(new Color(1, 1, 1, 0));
         wsp_obrotu_info.setLineWrap(true);
         wsp_obrotu_info.setAlignmentY(SwingConstants.CENTER);
+        
+        wsp_x_info.setEditable(false);
+        wsp_x_info.setBackground(new Color(1, 1, 1, 0));
+        wsp_x_info.setLineWrap(true);
+        wsp_x_info.setAlignmentY(SwingConstants.CENTER);
+        
+        wsp_y_info.setEditable(false);
+        wsp_y_info.setBackground(new Color(1, 1, 1, 0));
+        wsp_y_info.setLineWrap(true);
+        wsp_y_info.setAlignmentY(SwingConstants.CENTER);
         
         wsp_obrotu.setMaximumSize(new Dimension(2, 2));
         wsp_obrotu.setPreferredSize(new Dimension(2, 2));
@@ -154,7 +181,20 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         });
     
         
+        wsp_x.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                wsp_xMouseClicked(evt);
+            }
+        });
         
+        wsp_y.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                wsp_yMouseClicked(evt);
+            }
+        });
+        
+        
+
         
         
 
@@ -177,7 +217,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(przesuniecie_obserwatora);
 
         simpleU.addBranchGraph(scena);
-        timer.scheduleAtFixedRate(new Movement(), 0 ,1);
+        timer.scheduleAtFixedRate(new Movement(), 0 , 1);
         
         
         OrbitBehavior orbit = new OrbitBehavior(canvas3D, OrbitBehavior.REVERSE_ROTATE);      // mouse functionality
@@ -192,8 +232,10 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
 
     }
     BranchGroup utworzScene(){ 
+        Point3d punkcik = new Point3d(0,0,0);  
         BranchGroup wezel_scena = new BranchGroup();
         
+        BoundingSphere bounds = new BoundingSphere(punkcik,1000);
         wezel_scena.setBounds(bounds);
       //ŚWIATŁO////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       
@@ -248,7 +290,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         wyglad_noga_robota.setMaterial(mat_noga_robota);
         
         wezel_temp.addChild(noga_robota_tg);
-        Cylinder noga_robota = new Cylinder(0.1f, 0.39f, 1, 1000, 1000, wyglad_noga_robota);
+        Cylinder noga_robota = new Cylinder(0.0999f, 0.39f, 1, 1000, 1000, wyglad_noga_robota);
         noga_robota_tg.addChild(noga_robota);
         p_noga_robota.set(new Vector3f(0.0f, 0.2f, 0.0f));
         noga_robota_tg.setTransform(p_noga_robota);
@@ -256,9 +298,6 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         //Stół
         
         wezel_temp.addChild(stolik_tg);
-        
-        
-        
         
         
         
@@ -445,8 +484,8 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
                 
         com.sun.j3d.utils.geometry.Box objekt = new com.sun.j3d.utils.geometry.Box(object_size,object_size,object_size,com.sun.j3d.utils.geometry.Box.GENERATE_TEXTURE_COORDS,object_ap);
         
-        CollisionDetector myColDet = new CollisionDetector(objekt, bounds);
-        wezel_scena.addChild(myColDet);
+        //CollisionDetector myColDet = new CollisionDetector(objekt, bounds);
+        //wezel_scena.addChild(myColDet);
         
         Transform3D p_obiektu = new Transform3D();
         p_obiektu.set(new Vector3f(0.3f,0.155f,0.3f));
@@ -461,7 +500,7 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         blat.setUserData(new String("blat"));
         lightD.setUserData(new String("swiatlo1"));
         lightD2.setUserData(new String("swiatlo2"));
-        myColDet.setUserData(new String("kolizja"));
+        //myColDet.setUserData(new String("kolizja"));
         noga_robota.setUserData(new String("Noga robota"));
         objekt.setUserData(new String("box"));
         podloga.setUserData("podloga");
@@ -532,6 +571,116 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
            animuj.Animacja();
            }   
        }
+       else if(bt == obrot){
+//           
+            //odwrotna kinematyka
+            if(Math.sqrt( Math.pow( Double.parseDouble(wsp_x.getText()) , 2 ) + Math.pow( Double.parseDouble(wsp_y.getText()),2 ) ) <= 0.8){
+            kat2_temp = (float)(Math.asin(1)-Math.acos( ( Math.pow( Double.parseDouble(wsp_x.getText()) , 2 ) + Math.pow( Double.parseDouble(wsp_y.getText()) , 2 ) - 0.32 ) / ( 2 * 0.4 * 0.4 ) ));
+            kat1_temp = (float)(-Math.atan2(Double.parseDouble(wsp_y.getText()), -Double.parseDouble(wsp_x.getText())) - 
+                    Math.acos( ( Math.pow( Double.parseDouble(wsp_x.getText()) , 2 ) + Math.pow( Double.parseDouble(wsp_y.getText()) , 2 )  ) / ( -2 * 0.4 * Math.sqrt( Math.pow( Double.parseDouble(wsp_x.getText()) , 2 ) + Math.pow( Double.parseDouble(wsp_y.getText()),2 ) ) ) )
+                    );
+            
+            //normalizacja kąta
+            
+           if(kat1_temp>2*Math.asin(1))
+               kat1_temp -= 2*(float)(2*Math.asin(1));
+           if(kat1_temp<-2*Math.asin(1))
+               kat1_temp += 2*(float)(2*Math.asin(1));
+            
+                                
+            
+            
+            //Wykonanie obrotu ramienia dodatkowego
+            
+            if(Math.sqrt(kat2*kat2) < Math.sqrt(kat2_temp*kat2_temp)){
+            {
+                if(kat2<kat2_temp)
+                    
+            while (Math.abs(kat2_temp-kat2) > 0.05f*v_obrotu )
+                    {                    
+                        System.out.println("Wykonanie pętli 1");
+                        obrotLewoSecond(0.05f*v_obrotu);
+                        animuj.Animacja();
+                    }
+                else if(kat2>kat2_temp)
+                    
+            while (Math.abs(kat2_temp-kat2) > 0.05f*v_obrotu )
+                    {                    
+                        System.out.println("Wykonanie pętli 2");
+                        obrotPrawoSecond(0.05f*v_obrotu);
+                        animuj.Animacja();
+                    }
+            }
+            }
+            else if(Math.sqrt(kat2*kat2) > Math.sqrt(kat2_temp*kat2_temp)){
+            
+            {
+
+                if(kat2<kat2_temp)
+                    while (Math.abs(kat2_temp-kat2) > 0.05f*v_obrotu )
+                    {                    
+                        System.out.println("Wykonanie pętli 3");
+                        obrotLewoSecond(0.05f*v_obrotu);
+                    }
+                else if(kat2>kat2_temp)
+                    while (Math.abs(kat2_temp-kat2) > 0.05f*v_obrotu )
+                    {                    
+                        System.out.println("Wykonanie pętli 4");
+                        obrotPrawoSecond(0.05f*v_obrotu);
+                        animuj.Animacja();
+                    }
+            }    
+            }
+            
+            //Wykonanie obrotu ramienia głównego
+            
+            if(Math.sqrt(kat1*kat1) < Math.sqrt(kat1_temp*kat1_temp)){
+            {
+
+                if(kat1<kat1_temp)
+                        while (Math.abs(kat1_temp-kat1) > 0.05f*v_obrotu)
+                    {                    
+                        System.out.println("Wykonanie pętli 5" + "\nAktualna wartość kąta 1: " + kat1 + "\nPożądana wartość kąta 1: " + kat1_temp );
+                        obrotLewoMain(0.05f*v_obrotu);
+                        animuj.Animacja();
+                    }
+                else if(kat1>kat1_temp)
+                        while (Math.abs(kat1_temp-kat1) > 0.05f*v_obrotu)
+                    {                    
+                        
+                        System.out.println("Wykonanie pętli 6" + "\nAktualna wartość kąta 1: " + kat1 + "\nPożądana wartość kąta 1: " + kat1_temp );
+                        obrotPrawoMain(0.05f*v_obrotu);
+                        animuj.Animacja();
+                    }
+            }
+            }
+            else if(Math.sqrt(kat1*kat1) > Math.sqrt(kat1_temp*kat1_temp)){
+            {
+
+                if(kat1<kat1_temp)
+                        while (Math.abs(kat1_temp-kat1) > 0.05f*v_obrotu) 
+                    {                   
+                        System.out.println("Wykonanie pętli 7" + "\nAktualna wartość kąta 1: " + kat1 + "\nPożądana wartość kąta 1: " + kat1_temp );
+                        obrotLewoMain(0.05f*v_obrotu);
+                        animuj.Animacja();
+                    }
+                else if(kat1>kat1_temp)
+                        while (Math.abs(kat1_temp-kat1) > 0.05f*v_obrotu)
+                    {                    
+                        System.out.println("Wykonanie pętli 8" + "\nAktualna wartość kąta 1: " + kat1 + "\nPożądana wartość kąta 1: " + kat1_temp );
+                        obrotPrawoMain(0.05f*v_obrotu);
+                        animuj.Animacja();
+                    }
+            }    
+            }
+            
+            }
+            else if ((0.8*0.8-Double.parseDouble(wsp_x.getText())) < 0 && (0.8*0.8-Double.parseDouble(wsp_y.getText())) > 0)
+                System.out.println("Podaj współrzędne tak, aby pierwiastek sumy ich kwadratów nie przekraczał 0.8. Dla danego 'y' maksymalny x wynosi: " + Math.sqrt(0.8*0.8-Math.pow(Double.parseDouble(wsp_y.getText()),2)) + ".");
+            else if ((0.8*0.8-Double.parseDouble(wsp_x.getText())) > 0 && (0.8*0.8-Double.parseDouble(wsp_y.getText())) < 0)
+                System.out.println("Podaj współrzędne tak, aby pierwiastek sumy ich kwadratów nie przekraczał 0.8. Dla danego 'x' maksymalny y wynosi " + Math.sqrt(0.8*0.8-Math.pow(Double.parseDouble(wsp_x.getText()),2)) + ".");
+            else System.out.println("Podaj współrzędne tak, aby pierwiastek sumy ich kwadratów nie przekraczał 0.8.");
+}
        
          
    
@@ -594,15 +743,15 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
       if(kat2 < 4.2f && !collision)
       kat2 += krok;    
       p_ramie_2.rotY(kat2);
-      matka_ramie_2_tg.setTransform(p_ramie_2); 
-
+      matka_ramie_2_tg.setTransform(p_ramie_2);
+      System.out.println("obrotLewoSecond kat2: " + kat2);
     }
     private void obrotPrawoSecond(float krok){
         if(kat2 > -0.87f && !collision)
       kat2 -= krok;    
       p_ramie_2.rotY(kat2);
       matka_ramie_2_tg.setTransform(p_ramie_2);
-
+      System.out.println("obrotPrawoSecond kat2: " + kat2);
     }
     private void gora(float krok){   
       if(w_gore<-0.01){
@@ -653,7 +802,39 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
                     
            if(hang_object)
               tg_obiektu.setTransform(temp_transform);
+           if(kat1>2*Math.asin(1))
+               kat1 -= 2*(float)(2*Math.asin(1));
+           if(kat1<-2*Math.asin(1))
+               kat1 += 2*(float)(2*Math.asin(1));
+           if(kat2>2*Math.asin(1))
+               kat2 -= 2*(float)(2*Math.asin(1));
+           if(kat2<-2*Math.asin(1))
+               kat2 += 2*(float)(2*Math.asin(1));
+           raport_temp++;
+           if(raport_temp>5000){
             
+            try{
+            System.out.println("Kąt 1: " + kat1 + "    Kąt 2: " + kat2);
+            System.out.println("x: " + temp_vector.getX() + "  y: " + temp_vector.getY() + "  z: " + temp_vector.getZ());
+            System.out.println("x: " + temp_vector.getX() + "  y: " + temp_vector.getY() + "  z: " + temp_vector.getZ());
+            System.out.println(
+            "x: " + Double.parseDouble(wsp_x.getText()) +
+            "\ny: " + Double.parseDouble(wsp_y.getText()) + 
+            "\nx^2: " + Math.pow( Double.parseDouble(wsp_x.getText()) , 2 ) +
+            "\ny^2: " + Math.pow( Double.parseDouble(wsp_y.getText()) , 2 ) +
+            "\npierwiastek z x^2 + y^2: " + Math.sqrt( Math.pow( Double.parseDouble(wsp_x.getText()) , 2 ) + Math.pow( Double.parseDouble(wsp_y.getText()) , 2 ) ) +
+            "\nacos(x/y)" + Math.acos(Math.sqrt( Math.pow( Double.parseDouble(wsp_x.getText()) , 2 ) + Math.pow( Double.parseDouble(wsp_y.getText()) , 2 ) )/0.8)
+            );
+            raport_temp=0;
+            }
+            catch(Exception e){}
+           }
+            
+            //System.out.println("Kąt 2 :" + kat2 + "    Kąt 1: " + kat1 + " 2 asin(1)" + 4*Math.asin(1));
+            pionowy_tg.getLocalToVworld(temp_transform3);
+            temp_transform.get(temp_vector);
+            //System.out.println("x: " + temp_vector.getX() + "y: " + temp_vector.getY() + "z: " + temp_vector.getZ());
+           
         }
     }
 
@@ -661,87 +842,100 @@ public class Robot extends JFrame implements ActionListener, KeyListener{
         wsp_obrotu.setText("");
         } 
        
+       private void wsp_xMouseClicked(java.awt.event.MouseEvent evt){
+        wsp_x.setText("");
+        } 
      
+       private void wsp_yMouseClicked(java.awt.event.MouseEvent evt){
+        wsp_y.setText("");
+        } 
        
        
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
+//      private boolean Collision(){
+//          Vector3f tempV1 = new Vector3f();
+//          Vector3f tempV2 = new Vector3f();
+//          Transform3D temp1 = new Transform3D();
+//          Transform3D temp2 = new Transform3D();
+//          Vector3f tempV3 = new Vector3f();
+//          Transform3D temp3 = new Transform3D();
+//       
+//       
+//       
+//       
+//       
+//       
+//       
+//       
+//       
+//       
 
- class CollisionDetector extends Behavior {
-  /** The separate criteria used to wake up this beahvior. */
-  protected WakeupCriterion[] theCriteria;
- 
-  /** The OR of the separate criteria. */
-  protected WakeupOr oredCriteria;
- 
-  /** The shape that is watched for collision. */
-  protected com.sun.j3d.utils.geometry.Box collidingBox;
- 
-  /**
-   * @param theShape
-   *            Shape3D that is to be watched for collisions.
-   * @param theBounds
-   *            Bounds that define the active region for this behaviour
-   */
-  public CollisionDetector(com.sun.j3d.utils.geometry.Box theShape, Bounds theBounds) {
-    collidingBox = theShape;
-    setSchedulingBounds(theBounds);
-  }
- 
-  /**
-   * This creates an entry, exit and movement collision criteria. These are
-   * then OR'ed together, and the wake up condition set to the result.
-   */
-  public void initialize() {
-    theCriteria = new WakeupCriterion[3];
-    theCriteria[0] = new WakeupOnCollisionEntry(collidingBox);
-    theCriteria[1] = new WakeupOnCollisionExit(collidingBox);
-    theCriteria[2] = new WakeupOnCollisionMovement(collidingBox); 
-    
-      System.out.println(collidingBox.getBounds());
-    oredCriteria = new WakeupOr(theCriteria);
-    wakeupOn(oredCriteria);
-  }
- 
-  /**
-   * Where the work is done in this class. A message is printed out using the
-   * userData of the object collided with. The wake up condition is then set
-   * to the OR'ed criterion again.
-   */
-
-  public void processStimulus(Enumeration criteria) {
-      if(criteria.hasMoreElements()){
-         
-    WakeupCriterion theCriterion = (WakeupCriterion) criteria.nextElement();
-    if (theCriterion instanceof WakeupOnCollisionEntry) {      
-          
-           Node theLeaf = ((WakeupOnCollisionEntry) theCriterion)
-          .getTriggeringPath().getObject();
-        System.out.println("Collision Started "+ theLeaf.getUserData()); 
-    }
-    else if (theCriterion instanceof WakeupOnCollisionExit) {  
-      System.out.println("agas");
-      collision = false;
-    }
-    else if (theCriterion instanceof WakeupOnCollisionMovement){ 
-          Node theLeaf = ((WakeupOnCollisionMovement) theCriterion)
-          .getTriggeringPath().getObject();
-      System.out.println("kolizja z :  " + theLeaf.getUserData());
-     collision = true;
-    }
-      }
-    wakeupOn(oredCriteria);  
-    }
-  }
-}    
+// class CollisionDetector extends Behavior {
+//  /** The separate criteria used to wake up this beahvior. */
+//  protected WakeupCriterion[] theCriteria;
+// 
+//  /** The OR of the separate criteria. */
+//  protected WakeupOr oredCriteria;
+// 
+//  /** The shape that is watched for collision. */
+//  protected com.sun.j3d.utils.geometry.Box collidingBox;
+// 
+//  /**
+//   * @param theShape
+//   *            Shape3D that is to be watched for collisions.
+//   * @param theBounds
+//   *            Bounds that define the active region for this behaviour
+//   */
+//  public CollisionDetector(com.sun.j3d.utils.geometry.Box theShape, Bounds theBounds) {
+//    collidingBox = theShape;
+//    setSchedulingBounds(theBounds);
+//  }
+// 
+//  /**
+//   * This creates an entry, exit and movement collision criteria. These are
+//   * then OR'ed together, and the wake up condition set to the result.
+//   */
+//  public void initialize() {
+//    theCriteria = new WakeupCriterion[3];
+//    theCriteria[0] = new WakeupOnCollisionEntry(collidingBox);
+//    theCriteria[1] = new WakeupOnCollisionExit(collidingBox);
+//    theCriteria[2] = new WakeupOnCollisionMovement(collidingBox); 
+//    
+//      System.out.println(collidingBox.getBounds());
+//    oredCriteria = new WakeupOr(theCriteria);
+//    wakeupOn(oredCriteria);
+//  }
+// 
+//  /**
+//   * Where the work is done in this class. A message is printed out using the
+//   * userData of the object collided with. The wake up condition is then set
+//   * to the OR'ed criterion again.
+//   */
+//
+//  public void processStimulus(Enumeration criteria) {
+//      if(criteria.hasMoreElements()){
+//         
+//    WakeupCriterion theCriterion = (WakeupCriterion) criteria.nextElement();
+//    if (theCriterion instanceof WakeupOnCollisionEntry) {      
+//          
+//           Node theLeaf = ((WakeupOnCollisionEntry) theCriterion)
+//          .getTriggeringPath().getObject();
+//        System.out.println("Collision Started "+ theLeaf.getUserData()); 
+//    }
+//    else if (theCriterion instanceof WakeupOnCollisionExit) {  
+//      System.out.println("agas");
+//      collision = false;
+//    }
+//    else if (theCriterion instanceof WakeupOnCollisionMovement){ 
+//          Node theLeaf = ((WakeupOnCollisionMovement) theCriterion)
+//          .getTriggeringPath().getObject();
+//      System.out.println("kolizja z :  " + theLeaf.getUserData());
+//     collision = true;
+//    }
+//      }
+//    wakeupOn(oredCriteria);  
+//    }
+//  }
+//}    
        
-
+}
      
